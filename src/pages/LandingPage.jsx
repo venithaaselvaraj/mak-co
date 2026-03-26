@@ -1,364 +1,327 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { Globe, ShoppingBag, User, Menu, X, ArrowRight } from 'lucide-react';
-import AuthModal from '../components/Auth/AuthModal';
-import { useLanguage } from '../context/LanguageContext';
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { FiArrowRight, FiMenu, FiX, FiInstagram, FiTwitter, FiFacebook, FiShoppingBag, FiUser, FiSearch, FiChevronRight } from 'react-icons/fi';
 
-// Import assets
-import dhotiImg from '../assets/dhoti.png';
-import madisarImg from '../assets/madisar.png';
-import cottonImg from '../assets/cotton.png';
+const navLinks = [
+  { name: 'Home', href: '#' },
+  { name: 'Collections', href: '#collections' },
+  { name: 'About Us', href: '#about' },
+  { name: 'Contact', href: '#contact' },
+];
 
-const LandingPage = () => {
-    const [isSignupOpen, setSignupOpen] = useState(false);
-    const [initialAuthMode, setInitialAuthMode] = useState('signup'); // 'signup', 'login', 'admin'
-    const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
-    const { language, toggleLanguage, t } = useLanguage();
+const categories = [
+  { name: 'Bridal Couture', image: 'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&q=80&w=800', desc: 'Handcrafted lehengas for your special day.' },
+  { name: 'Regal Silk', image: 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&q=80&w=800', desc: 'Pure Kanchipuram and Banaras weaves.' },
+  { name: 'Modern Ethnic', image: 'https://images.unsplash.com/photo-1567401893414-76b7b1e5a7a5?auto=format&fit=crop&q=80&w=800', desc: 'Chic kurtis and sets for daily elegance.' },
+];
 
-    const openAuth = (mode = 'signup') => {
-        setInitialAuthMode(mode);
-        setSignupOpen(true);
-    };
+export default function LandingPage() {
+  const [scrollY, setScrollY] = useState(0);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-    const scrollToSection = (id) => {
-        const element = document.getElementById(id);
-        if (element) {
-            element.scrollIntoView({ behavior: 'smooth' });
-            setMobileMenuOpen(false);
-        }
-    };
+  useEffect(() => {
+    const handleScroll = () => setScrollY(window.scrollY);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
-    const Navbar = () => (
-        <nav className="fixed top-0 w-full z-50 bg-white/90 backdrop-blur-md border-b border-[#800000]/10 shadow-sm">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="flex justify-between items-center h-20">
-                    {/* Logo */}
-                    <div className="flex-shrink-0 flex items-center gap-2 cursor-pointer" onClick={() => window.scrollTo(0, 0)}>
-                        <div className="w-10 h-10 bg-[#800000] rounded-full flex items-center justify-center text-[#FDFBF7] font-['Cinzel'] font-bold text-xl border-2 border-[#D4AF37]">
-                            M
-                        </div>
-                        <div className="flex flex-col">
-                            <span className="font-['Cinzel'] font-bold text-[#800000] text-lg leading-none">MKV & CO</span>
-                            <span className="text-[10px] text-[#D4AF37] tracking-[0.2em] font-semibold">EST. 1980</span>
-                        </div>
-                    </div>
-
-                    {/* Desktop Menu */}
-                    <div className="hidden md:flex items-center space-x-8">
-                        {['home', 'history', 'about', 'products'].map((item) => (
-                            <button
-                                key={item}
-                                onClick={() => scrollToSection(item)}
-                                className="text-[#5a2e2e] hover:text-[#800000] font-medium transition-colors uppercase text-sm tracking-wide"
-                            >
-                                {t('nav', item)}
-                            </button>
-                        ))}
-                    </div>
-
-                    {/* Right Actions */}
-                    <div className="hidden md:flex items-center gap-4">
-                        <button
-                            onClick={toggleLanguage}
-                            className="flex items-center gap-2 px-3 py-1 rounded-full border border-[#D4AF37]/30 text-[#800000] hover:bg-[#800000]/5 transition-all text-sm font-medium"
-                        >
-                            <Globe size={16} />
-                            <span>{language === 'en' ? 'EN' : 'TA'}</span>
-                        </button>
-                        <motion.button
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                            onClick={() => openAuth('login')}
-                            className="bg-[#800000] text-white px-6 py-2 rounded-full font-['Cinzel'] shadow-lg hover:bg-[#600000] transition-colors flex items-center gap-2"
-                        >
-                            <User size={16} />
-                            {t('nav', 'login')}
-                        </motion.button>
-                    </div>
-
-                    {/* Mobile Menu Button */}
-                    <div className="md:hidden flex items-center gap-4">
-                        <button
-                            onClick={toggleLanguage}
-                            className="flex items-center gap-1 p-2 text-[#800000]"
-                        >
-                            <Globe size={20} />
-                            <span className="text-xs font-bold">{language === 'en' ? 'EN' : 'TA'}</span>
-                        </button>
-                        <button
-                            onClick={() => setMobileMenuOpen(!isMobileMenuOpen)}
-                            className="text-[#800000]"
-                        >
-                            {isMobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
-                        </button>
-                    </div>
-                </div>
+  return (
+    <div className="min-h-screen bg-[#FBF6E9] text-[#2D1B10] font-light selection:bg-amber-200 selection:text-[#800000]">
+      
+      {/* --- TRADITIONAL NAVIGATION --- */}
+      <nav className={`fixed top-0 w-full z-50 transition-all duration-500 ${
+        scrollY > 50 ? 'bg-[#FBF6E9]/95 backdrop-blur-md py-4 border-b border-amber-900/10 shadow-lg' : 'bg-transparent py-8'
+      }`}>
+        <div className="max-w-7xl mx-auto px-6 lg:px-12 flex justify-between items-center">
+          {/* Logo */}
+          <Link to="/" className="group flex items-center gap-3">
+            <div className="text-2xl font-serif tracking-[0.2em] font-medium transition-transform group-hover:scale-105 text-[#800000]">
+              M A K <span className="text-amber-600">&</span> CO
             </div>
+          </Link>
 
-            {/* Mobile Menu Dropdown */}
-            {isMobileMenuOpen && (
-                <div className="md:hidden bg-white border-t border-gray-100 absolute w-full shadow-xl">
-                    <div className="px-4 pt-2 pb-6 space-y-2">
-                        {['home', 'history', 'about', 'products'].map((item) => (
-                            <button
-                                key={item}
-                                onClick={() => scrollToSection(item)}
-                                className="block w-full text-left px-3 py-4 text-base font-medium text-[#5a2e2e] hover:bg-[#800000]/5 hover:text-[#800000] border-b border-gray-50"
-                            >
-                                {t('nav', item)}
-                            </button>
-                        ))}
-                        <button
-                            onClick={() => {
-                                setSignupOpen(true);
-                                setMobileMenuOpen(false);
-                            }}
-                            className="w-full mt-4 bg-[#800000] text-white py-3 rounded-lg font-bold"
-                        >
-                            {t('nav', 'login')}
-                        </button>
-                    </div>
-                </div>
-            )}
-        </nav>
-    );
+          {/* Desktop Links */}
+          <div className="hidden md:flex items-center gap-10">
+            {navLinks.map((link) => (
+              <a key={link.name} href={link.href} className="text-[10px] uppercase tracking-[0.3em] text-[#5D4037] hover:text-[#800000] transition-colors font-semibold">
+                {link.name}
+              </a>
+            ))}
+          </div>
 
-    const Hero = () => (
-        <section id="home" className="relative h-screen flex items-center justify-center pt-20 overflow-hidden">
-            {/* Background Pattern */}
-            <div className="absolute inset-0 opacity-[0.03]"
-                style={{
-                    backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23800000' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-                }}
-            />
-
-            {/* Soft Gradient Blob */}
-            <div className="absolute top-1/4 -right-20 w-96 h-96 bg-[#D4AF37]/20 rounded-full blur-[100px]" />
-            <div className="absolute bottom-1/4 -left-20 w-96 h-96 bg-[#800000]/10 rounded-full blur-[100px]" />
-
-            <div className="relative z-10 text-center max-w-4xl px-6">
-                <motion.div
-                    initial={{ opacity: 0, y: 30 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 1 }}
-                >
-                    <div className="flex items-center justify-center gap-4 mb-6">
-                        <div className="h-[1px] w-12 md:w-24 bg-gradient-to-r from-transparent to-[#D4AF37]" />
-                        <span className="text-[#D4AF37] tracking-[0.3em] uppercase font-['Cinzel'] font-semibold text-sm md:text-base">Since 1980</span>
-                        <div className="h-[1px] w-12 md:w-24 bg-gradient-to-l from-transparent to-[#D4AF37]" />
-                    </div>
-
-                    <h1 className="font-['Cinzel'] text-5xl md:text-7xl font-bold text-[#800000] mb-8 leading-tight">
-                        MKV & CO
-                    </h1>
-
-                    <p className="text-[#5a2e2e] font-['Crimson_Text'] text-xl md:text-2xl italic leading-relaxed mb-12 max-w-2xl mx-auto">
-                        {t('landing', 'quote')}
-                    </p>
-
-                    <motion.button
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        onClick={() => scrollToSection('products')}
-                        className="bg-transparent border-2 border-[#800000] text-[#800000] px-8 py-3 rounded-full font-['Cinzel'] font-bold hover:bg-[#800000] hover:text-white transition-all duration-300 shadow-sm hover:shadow-lg"
-                    >
-                        Explore Collection
-                    </motion.button>
-                </motion.div>
-            </div>
-        </section>
-    );
-
-    const SectionTitle = ({ title, subtitle }) => (
-        <div className="text-center mb-16">
-            <h2 className="font-['Cinzel'] text-3xl md:text-4xl font-bold text-[#800000] mb-3 relative inline-block">
-                {title}
-                <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-1/2 h-1 bg-[#D4AF37]" />
-            </h2>
-            {subtitle && <p className="text-[#5a2e2e]/70 mt-4 max-w-2xl mx-auto">{subtitle}</p>}
+          {/* Actions */}
+          <div className="flex items-center gap-6">
+            <button className="hover:text-[#800000] text-[#5D4037] transition-colors hidden sm:block"><FiSearch size={18} /></button>
+            <Link to="/login" className="hover:text-[#800000] text-[#5D4037] transition-colors flex items-center gap-2 text-[10px] uppercase tracking-widest font-bold">
+              <FiUser size={18} /> <span className="hidden lg:inline">Sign In</span>
+            </Link>
+            <Link to="/signup" className="bg-[#800000] text-white px-6 py-2.5 text-[10px] uppercase tracking-[0.2em] hover:bg-[#A52A2A] transition-all shadow-md">
+              Join Us
+            </Link>
+            <button className="md:hidden text-[#800000]" onClick={() => setMobileMenuOpen(true)}>
+              <FiMenu size={24} />
+            </button>
+          </div>
         </div>
-    );
+      </nav>
 
-    const HistorySection = () => (
-        <section id="history" className="py-24 bg-[#FDFBF7] relative">
-            <div className="max-w-7xl mx-auto px-6">
-                <SectionTitle title={t('history', 'title')} />
+      {/* --- MOBILE MENU --- */}
+      <div className={`fixed inset-0 z-[100] bg-[#FBF6E9] transition-transform duration-500 ${mobileMenuOpen ? 'translate-x-0' : 'translate-x-full'}`}>
+        <div className="p-8 flex flex-col h-full">
+          <div className="flex justify-between items-center mb-16">
+            <div className="text-xl font-serif tracking-widest text-[#800000]">M A K & CO</div>
+            <button onClick={() => setMobileMenuOpen(false)} className="text-[#800000]"><FiX size={28} /></button>
+          </div>
+          <div className="flex flex-col gap-8">
+            {navLinks.map((link) => (
+              <a key={link.name} href={link.href} className="text-2xl font-serif text-[#5D4037] hover:text-[#800000] transition-colors" onClick={() => setMobileMenuOpen(false)}>
+                {link.name}
+              </a>
+            ))}
+            <hr className="border-amber-900/10" />
+            <Link to="/login" className="text-lg font-serif text-[#5D4037]">Sign In</Link>
+            <Link to="/signup" className="text-lg font-serif text-[#800000]">Membership</Link>
+          </div>
+        </div>
+      </div>
 
-                <div className="grid md:grid-cols-2 gap-12 items-center">
-                    <motion.div
-                        initial={{ opacity: 0, x: -50 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.8 }}
-                    >
-                        <div className="relative group">
-                            <div className="absolute inset-0 bg-[#800000] rounded-2xl rotate-3 opacity-20 group-hover:rotate-6 transition-transform duration-500" />
-                            <img
-                                src={cottonImg}
-                                alt="History"
-                                className="relative rounded-2xl shadow-xl w-full h-[400px] object-cover border border-[#D4AF37]/20"
-                            />
-                        </div>
-                    </motion.div>
+      {/* --- HERO SECTION --- */}
+      <header className="relative h-screen flex items-center overflow-hidden">
+        {/* Background Image with Parallax effect simulation */}
+        <div className="absolute inset-0 z-0">
+          <img 
+            src="https://images.unsplash.com/photo-1594235412411-208b04a9696c?auto=format&fit=crop&q=80&w=2000" 
+            alt="Luxury Fabric"
+            className="w-full h-full object-cover opacity-80"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-white via-white/40 to-transparent"></div>
+        </div>
 
-                    <motion.div
-                        initial={{ opacity: 0, x: 50 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.8, delay: 0.2 }}
-                        className="space-y-6"
-                    >
-                        <p className="text-xl leading-loose font-['Crimson_Text'] text-[#4a3b3b]">
-                            {t('history', 'content')}
-                        </p>
-                        <div className="flex gap-4">
-                            <div className="flex flex-col items-center">
-                                <span className="font-['Cinzel'] text-3xl text-[#D4AF37] font-bold">40+</span>
-                                <span className="text-sm uppercase tracking-wider text-[#800000]">Years</span>
-                            </div>
-                            <div className="w-[1px] bg-[#D4AF37]/50" />
-                            <div className="flex flex-col items-center">
-                                <span className="font-['Cinzel'] text-3xl text-[#D4AF37] font-bold">10k+</span>
-                                <span className="text-sm uppercase tracking-wider text-[#800000]">Customers</span>
-                            </div>
-                        </div>
-                    </motion.div>
-                </div>
+        <div className="max-w-7xl mx-auto px-6 lg:px-12 relative z-10 w-full pt-20">
+          <div className="max-w-2xl space-y-8">
+            <div className="inline-block overflow-hidden">
+              <span className="block text-[10px] uppercase tracking-[0.4em] text-amber-600 animate-slideUp font-bold">
+                Purity • Tradition • Excellence
+              </span>
             </div>
-        </section>
-    );
+            
+            <h1 className="text-6xl md:text-8xl font-serif leading-[1.1] animate-fadeIn text-[#2D1B10]">
+              Divine
+              <br />
+              <span className="italic text-[#800000]">Heritage</span>
+              <br />
+              Attire.
+            </h1>
+            
+            <p className="text-lg text-[#5D4037] max-w-lg leading-relaxed font-light animate-fadeIn" style={{ animationDelay: '0.2s' }}>
+              Handcrafted masterpieces specifically curated for Temple use and traditional Vedic lifestyles. Rediscover the sanctity of Indian weaves.
+            </p>
 
-    const AboutSection = () => (
-        <section id="about" className="py-24 bg-white">
-            <div className="max-w-7xl mx-auto px-6">
-                <div className="grid md:grid-cols-2 gap-16 items-center">
-                    <motion.div
-                        initial={{ opacity: 0, y: 30 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        className="order-2 md:order-1"
-                    >
-                        <h2 className="font-['Cinzel'] text-3xl md:text-4xl font-bold text-[#800000] mb-6">
-                            {t('about', 'title')}
-                        </h2>
-                        <p className="text-xl leading-loose font-['Crimson_Text'] text-[#4a3b3b] mb-8">
-                            {t('about', 'content')}
-                        </p>
-
-                        <button className="flex items-center gap-2 text-[#800000] font-bold hover:gap-4 transition-all">
-                            Read Our Story <ArrowRight size={18} />
-                        </button>
-                    </motion.div>
-
-                    <motion.div
-                        initial={{ opacity: 0, scale: 0.95 }}
-                        whileInView={{ opacity: 1, scale: 1 }}
-                        viewport={{ once: true }}
-                        className="order-1 md:order-2"
-                    >
-                        <div className="grid grid-cols-2 gap-4">
-                            <img src={madisarImg} alt="Saree" className="rounded-lg shadow-lg w-full h-48 object-cover translate-y-8" />
-                            <img src={dhotiImg} alt="Dhoti" className="rounded-lg shadow-lg w-full h-48 object-cover" />
-                        </div>
-                    </motion.div>
-                </div>
+            <div className="flex flex-col sm:flex-row gap-6 pt-4 animate-fadeIn" style={{ animationDelay: '0.4s' }}>
+              <Link to="/signup" className="group flex items-center justify-center gap-4 bg-[#800000] text-white py-5 px-10 text-[10px] uppercase tracking-[0.3em] hover:bg-[#A52A2A] transition-all shadow-xl">
+                Explore The Veda Edit
+                <FiArrowRight className="group-hover:translate-x-2 transition-transform" />
+              </Link>
+              <button className="flex items-center justify-center gap-2 text-[10px] uppercase tracking-[0.3em] font-bold text-[#5D4037] border-b border-amber-900/20 pb-1 hover:text-[#800000] hover:border-[#800000] transition-all">
+                The Heritage Story
+              </button>
             </div>
-        </section>
-    );
+          </div>
+        </div>
 
-    const ProductCard = ({ title, img, price, delay }) => (
-        <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay }}
-            className="group cursor-pointer"
-        >
-            <div className="relative overflow-hidden rounded-xl mb-4 h-[350px]">
-                <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors z-10" />
-                <img
-                    src={img}
-                    alt={title}
-                    className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700 ease-out"
-                />
-                <button className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-white/90 backdrop-blur-sm text-[#800000] px-6 py-2 rounded-full font-bold opacity-0 group-hover:opacity-100 transform translate-y-full group-hover:translate-y-0 transition-all duration-300 z-20 whitespace-nowrap shadow-lg">
-                    View Details
+        {/* Scroll Indicator */}
+        <div className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4 opacity-30">
+          <span className="text-[10px] uppercase tracking-[0.3em] rotate-90 origin-left translate-x-1.5 translate-y-8 text-[#800000] font-bold">Scroll</span>
+          <div className="w-px h-16 bg-[#800000]"></div>
+        </div>
+      </header>
+
+      {/* --- TRADITIONAL COLLECTIONS --- */}
+      <section id="collections" className="py-32 px-6 lg:px-12 bg-[#FBF6E9]">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex flex-col md:flex-row md:items-end justify-between mb-20 gap-8">
+            <div className="space-y-4">
+              <span className="text-[10px] uppercase tracking-[0.4em] text-amber-600 font-bold">The Holy Edit</span>
+              <h2 className="text-4xl md:text-5xl font-serif text-[#2D1B10]">Temple Heritage</h2>
+            </div>
+            <p className="text-[#5D4037]/60 max-w-sm text-sm leading-relaxed">
+              Discover weaves blessed with tradition, specifically designed for those who uphold the Vedic values of purity and grace.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-12 lg:gap-20">
+            {[
+              { name: "Traditional Sarees", desc: "Pure Silk & Hand-woven Zari", image: "https://images.unsplash.com/photo-1583391733956-6c7827447d92?auto=format&fit=crop&q=80&w=1000" },
+              { name: "Heritage Vasti", desc: "Pure Cotton & Silk Panchakacham", image: "https://images.unsplash.com/photo-1621184455862-c163dfb30e0f?auto=format&fit=crop&q=80&w=1000" },
+              { name: "Temple Silks", desc: "Auspicious Kanchipuram for Rituals", image: "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&q=80&w=1000" }
+            ].map((cat, i) => (
+              <div key={i} className="group cursor-pointer">
+                <div className="aspect-[3/4] overflow-hidden mb-8 relative border border-amber-900/10 shadow-sm transition-shadow hover:shadow-xl">
+                  <img 
+                    src={cat.image} 
+                    alt={cat.name} 
+                    className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110 opacity-90 group-hover:opacity-100"
+                  />
+                  <div className="absolute inset-0 bg-amber-900/10 group-hover:bg-amber-900/0 transition-colors duration-500"></div>
+                </div>
+                <h3 className="text-xl font-serif mb-2 text-[#2D1B10] group-hover:text-[#800000] transition-colors">{cat.name}</h3>
+                <p className="text-[10px] text-[#5D4037]/50 tracking-widest uppercase mb-6 font-semibold">{cat.desc}</p>
+                <button className="flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] font-bold text-[#5D4037]/60 border-b border-transparent group-hover:border-[#800000] group-hover:text-[#800000] transition-all pb-0.5">
+                  View Pieces <FiChevronRight />
                 </button>
-            </div>
-            <div className="text-center">
-                <h3 className="font-['Cinzel'] text-xl font-bold text-[#2d1b1b] group-hover:text-[#800000] transition-colors">{title}</h3>
-                <p className="text-[#D4AF37] font-medium mt-1">Premium Collection</p>
-            </div>
-        </motion.div>
-    );
-
-    const ProductsSection = () => (
-        <section id="products" className="py-24 bg-[#FDFBF7]">
-            <div className="max-w-7xl mx-auto px-6">
-                <SectionTitle title={t('products', 'title')} subtitle="Handpicked traditions for the modern soul" />
-
-                <div className="grid md:grid-cols-3 gap-8">
-                    <ProductCard
-                        title={t('products', 'dhoti')}
-                        img={dhotiImg}
-                        delay={0}
-                    />
-                    <ProductCard
-                        title={t('products', 'madisar')}
-                        img={madisarImg}
-                        delay={0.2}
-                    />
-                    <ProductCard
-                        title={t('products', 'cotton')}
-                        img={cottonImg}
-                        delay={0.4}
-                    />
-                </div>
-            </div>
-        </section>
-    );
-
-    const Footer = () => (
-        <footer className="bg-[#1a0f0f] text-white py-12 border-t border-[#D4AF37]/30">
-            <div className="max-w-7xl mx-auto px-6 text-center">
-                <div className="font-['Cinzel'] text-2xl font-bold mb-4">MKV & CO</div>
-                <div className="flex justify-center gap-6 mb-8 text-neutral-400">
-                    <a href="#" className="hover:text-[#D4AF37] transition-colors">{t('nav', 'home')}</a>
-                    <a href="#" className="hover:text-[#D4AF37] transition-colors">{t('nav', 'history')}</a>
-                    <a href="#" className="hover:text-[#D4AF37] transition-colors">{t('nav', 'about')}</a>
-                    <a href="#" className="hover:text-[#D4AF37] transition-colors">{t('nav', 'products')}</a>
-                </div>
-                <div className="flex flex-col items-center gap-4 text-neutral-500 text-sm">
-                    <p>© {new Date().getFullYear()} MKV & Co. All rights reserved.</p>
-                    <button
-                        onClick={() => openAuth('admin')}
-                        className="text-[#D4AF37]/50 hover:text-[#D4AF37] text-xs uppercase tracking-widest transition-colors"
-                    >
-                        {t('auth', 'adminPortal')}
-                    </button>
-                </div>
-            </div>
-        </footer>
-    );
-
-    return (
-        <div className="min-h-screen bg-[#FDFBF7] selection:bg-[#800000] selection:text-white">
-            <Navbar />
-            <main>
-                <Hero />
-                <HistorySection />
-                <AboutSection />
-                <ProductsSection />
-            </main>
-            <Footer />
-
-            <AuthModal
-                isOpen={isSignupOpen}
-                onClose={() => setSignupOpen(false)}
-                mode={initialAuthMode}
-            />
+              </div>
+            ))}
+          </div>
         </div>
-    );
-};
+      </section>
 
-export default LandingPage;
+      {/* --- CRAFTSMANSHIP SECTION --- */}
+      <section id="about" className="py-32 bg-[#F5F1E6] relative overflow-hidden border-y border-amber-900/10">
+        <div className="max-w-7xl mx-auto px-6 lg:px-12">
+          <div className="grid lg:grid-cols-2 gap-24 items-center">
+            <div className="relative order-2 lg:order-1">
+              <div className="absolute -top-20 -left-20 w-64 h-64 bg-amber-500/10 blur-[100px] rounded-full"></div>
+              <div className="aspect-[4/5] overflow-hidden rounded-sm relative z-10 border border-amber-900/20 shadow-xl">
+                <img 
+                  src="https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&q=80&w=1000" 
+                  alt="Craftsmanship"
+                  className="w-full h-full object-cover sepia-[0.3] hover:sepia-0 transition-all duration-700 opacity-90 hover:opacity-100"
+                />
+              </div>
+              {/* Floating Badge */}
+              <div className="absolute -bottom-10 -right-10 bg-[#800000] p-8 rounded-full aspect-square flex flex-col items-center justify-center text-center z-20 shadow-2xl animate-pulse">
+                <span className="text-white text-xs font-serif italic">Pure</span>
+                <span className="text-white text-[10px] font-bold tracking-tighter uppercase">Desi</span>
+              </div>
+            </div>
+            <div className="space-y-12 order-1 lg:order-2">
+              <div className="space-y-4">
+                <span className="text-[10px] uppercase tracking-[0.5em] text-amber-600 font-bold">Our Vedic Ethos</span>
+                <h2 className="text-4xl md:text-6xl font-serif leading-tight text-[#2D1B10]">Preserving the Thread of <span className="italic text-[#800000]">Sanctity</span></h2>
+              </div>
+              <p className="text-[#5D4037]/70 text-lg font-light leading-relaxed">
+                At M A K & CO, we understand that traditional attire is not just clothing; it is a spiritual conduct. We source our threads directly from temple-weaver communities who have served common deities for generations.
+              </p>
+              
+              <div className="grid sm:grid-cols-2 gap-12 pt-4">
+                <div className="space-y-3 p-6 bg-white/40 border border-amber-900/10 rounded-2xl hover:bg-white/60 transition-colors">
+                  <div className="w-8 h-px bg-[#800000] mb-4"></div>
+                  <h4 className="font-serif text-xl text-[#2D1B10]">Ritual Ready</h4>
+                  <p className="text-[11px] text-[#5D4037]/60 leading-relaxed tracking-wider uppercase font-semibold">Specifically designed for temple rituals, ensuring mobility and traditional aesthetics.</p>
+                </div>
+                <div className="space-y-3 p-6 bg-white/40 border border-amber-900/10 rounded-2xl hover:bg-white/60 transition-colors">
+                  <div className="w-8 h-px bg-[#800000] mb-4"></div>
+                  <h4 className="font-serif text-xl text-[#2D1B10]">Ethical Purity</h4>
+                  <p className="text-[11px] text-[#5D4037]/60 leading-relaxed tracking-wider uppercase font-semibold">No harmful dyes or machines; pure hand-loomed sanctity guaranteed for Brahminical protocols.</p>
+                </div>
+              </div>
+
+              <div className="pt-6">
+                <button className="group flex items-center gap-4 text-[10px] uppercase tracking-[0.4em] font-bold text-[#800000]">
+                  Read Our Brahminical Heritage
+                  <FiArrowRight className="group-hover:translate-x-2 transition-transform" />
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* --- FOR OWNERS & CONCIERGE --- */}
+      <section className="py-32 px-6 lg:px-12 bg-[#1a1a1a] text-white overflow-hidden">
+        <div className="max-w-7xl mx-auto relative">
+          <div className="text-center max-w-3xl mx-auto mb-20 space-y-6">
+            <h2 className="text-4xl md:text-6xl font-serif">A Digital Concierge for <span className="text-amber-500 italic">Fashion</span></h2>
+            <p className="text-slate-400 text-lg font-light">Whether you are curating for a shop or curating for your dream closet, our AI-powered ecosystem simplifies every step.</p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-px bg-white/10 border border-white/10">
+            {/* For Owners */}
+            <div className="p-16 hover:bg-white/[0.03] transition-colors group">
+              <div className="mb-10 w-16 h-px bg-amber-500"></div>
+              <h3 className="text-3xl font-serif mb-6">M A K & CO <span className="text-amber-500 italic">Bespoke</span></h3>
+              <p className="text-slate-400 mb-10 leading-relaxed font-light">Dedicated suite for shop owners. Manage multi-city inventory, track global textile trends, and automate procurement through AI-suggested supplier comparison.</p>
+              <Link to="/admin/login" className="inline-flex items-center gap-3 text-[10px] uppercase tracking-[0.3em] font-bold text-amber-500 group-hover:gap-6 transition-all underline underline-offset-8 decoration-white/20">
+                Enter Proprietor Suite <FiArrowRight />
+              </Link>
+            </div>
+            
+            {/* For Customers */}
+            <div className="p-16 hover:bg-white/[0.03] transition-colors group">
+              <div className="mb-10 w-16 h-px bg-amber-500"></div>
+              <h3 className="text-3xl font-serif mb-6">Personal <span className="text-amber-500 italic">Atelier</span></h3>
+              <p className="text-slate-400 mb-10 leading-relaxed font-light">Discover your style through our AI Fashion Assistant. Virtual trials, personalized trend alerts, and direct-to-weaver custom orders at your fingertips.</p>
+              <Link to="/login" className="inline-flex items-center gap-3 text-[10px] uppercase tracking-[0.3em] font-bold text-amber-500 group-hover:gap-6 transition-all underline underline-offset-8 decoration-white/20">
+                Explore Your Atelier <FiArrowRight />
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* --- FOOTER --- */}
+      <footer id="contact" className="bg-[#1A0F0A] py-24 px-6 lg:px-12 border-t border-amber-900/20">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid md:grid-cols-4 gap-16 mb-20">
+            <div className="md:col-span-2 space-y-8">
+              <div className="text-3xl font-serif tracking-[0.2em] text-[#FBF6E9]">M A K <span className="text-amber-500">&</span> CO</div>
+              <p className="text-[#FBF6E9]/40 max-w-sm text-sm leading-relaxed">
+                Upholding the Vedic sartorial conduct through authentic hand-woven sanctity and traditional precision.
+              </p>
+              
+
+
+              <div className="flex gap-6 mt-10">
+                <a href="#" className="hover:text-amber-500 transition-colors text-white/20"><FiInstagram size={20} /></a>
+                <a href="#" className="hover:text-amber-500 transition-colors text-white/20"><FiTwitter size={20} /></a>
+                <a href="#" className="hover:text-amber-500 transition-colors text-white/20"><FiFacebook size={20} /></a>
+              </div>
+            </div>
+            
+            <div className="space-y-6">
+              <h4 className="text-[10px] uppercase tracking-[0.3em] font-bold text-white/40">The Veda Palette</h4>
+              <ul className="space-y-4 text-[10px] tracking-[0.2em] text-white/20 uppercase font-bold">
+                <li><a href="#" className="hover:text-amber-500 transition-colors">Temple Silks</a></li>
+                <li><a href="#" className="hover:text-amber-500 transition-colors">Vedic Pancha</a></li>
+                <li><a href="#" className="hover:text-amber-500 transition-colors">Holy Madisar</a></li>
+                <li><a href="#" className="hover:text-amber-500 transition-colors">Angavastram</a></li>
+              </ul>
+            </div>
+
+            <div className="space-y-6">
+              <h4 className="text-[10px] uppercase tracking-[0.3em] font-bold text-white/40">Sanctity Support</h4>
+              <ul className="space-y-4 text-[10px] tracking-[0.2em] text-white/20 uppercase font-bold">
+                <li><a href="#" className="hover:text-amber-500 transition-colors">Ritual Guide</a></li>
+                <li><a href="#" className="hover:text-amber-500 transition-colors">Purity Guide</a></li>
+                <li><a href="#" className="hover:text-amber-500 transition-colors">Bulk Temple Orders</a></li>
+                <li><a href="#" className="hover:text-amber-500 transition-colors">Heritage Inquiry</a></li>
+              </ul>
+            </div>
+          </div>
+          
+          <div className="pt-10 border-t border-white/5 flex flex-col sm:flex-row justify-between items-center gap-6">
+            <p className="text-[9px] uppercase tracking-[0.4em] text-white/10">© 2025 M A K & CO. Blessed By Tradition.</p>
+            <p className="text-[9px] uppercase tracking-[0.4em] text-white/10 flex items-center gap-2">
+              Digital Heritage by <span className="font-bold text-white/30 tracking-normal italic uppercase">Antigravity AI</span>
+            </p>
+          </div>
+        </div>
+      </footer>
+
+      {/* --- ADD CUSTOM STYLES FOR ANIMATIONS --- */}
+      <style dangerouslySetInnerHTML={{ __html: `
+        @keyframes slideUp {
+          from { transform: translateY(100%); opacity: 0; }
+          to { transform: translateY(0); opacity: 1; }
+        }
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-slideUp { animation: slideUp 1s cubic-bezier(0.23, 1, 0.32, 1) forwards; }
+        .animate-fadeIn { animation: fadeIn 1.2s cubic-bezier(0.23, 1, 0.32, 1) forwards; }
+      `}} />
+
+    </div>
+  );
+}

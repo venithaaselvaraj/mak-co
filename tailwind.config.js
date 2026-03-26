@@ -1,45 +1,34 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-    content: [
-        "./index.html",
-        "./src/**/*.{js,ts,jsx,tsx}",
-    ],
-    theme: {
-        extend: {
-            colors: {
-                primary: {
-                    DEFAULT: '#0f172a',
-                    light: '#1e293b',
-                },
-                accent: {
-                    purple: '#8b5cf6',
-                    pink: '#ec4899',
-                }
-            },
-            fontFamily: {
-                sans: ['Inter', 'system-ui', 'sans-serif'],
-            },
-            animation: {
-                'gradient-x': 'gradient-x 15s ease infinite',
-                'float': 'float 6s ease-in-out infinite',
-            },
-            keyframes: {
-                'gradient-x': {
-                    '0%, 100%': {
-                        'background-size': '200% 200%',
-                        'background-position': 'left center'
-                    },
-                    '50%': {
-                        'background-size': '200% 200%',
-                        'background-position': 'right center'
-                    },
-                },
-                float: {
-                    '0%, 100%': { transform: 'translateY(0)' },
-                    '50%': { transform: 'translateY(-20px)' },
-                }
-            }
+  content: [
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
+  ],
+  theme: {
+    extend: {
+      fontFamily: {
+        sans: ['Inter', 'sans-serif'],
+        serif: ['Playfair Display', 'serif'],
+      },
+      colors: {
+        textile: {
+          gold: '#f59e0b',
+          amber: '#fbbf24',
+          silk: '#8b5cf6',
+          cotton: '#06b6d4',
+          linen: '#d4a574',
+          satin: '#ec4899',
         },
+      },
+      animation: {
+        'fade-in': 'fadeIn 0.5s ease-out forwards',
+        'slide-in': 'slideIn 0.4s ease-out forwards',
+        'pulse-glow': 'pulse-glow 3s ease-in-out infinite',
+      },
+      backdropBlur: {
+        xs: '2px',
+      },
     },
-    plugins: [],
+  },
+  plugins: [],
 }
