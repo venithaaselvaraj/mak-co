@@ -39,7 +39,7 @@ export default function UserLoginPage() {
             <span className="text-3xl font-serif">M</span>
           </div>
           <h1 className="text-4xl font-serif text-[#2D1B10]">
-            Devotee <span className="italic text-[#800000]">Login</span>
+            User <span className="italic text-[#800000]">Login</span>
           </h1>
           <p className="text-[#5D4037]/60 mt-3 text-[10px] font-bold tracking-[0.3em] uppercase opacity-50">M A K & CO Atelier</p>
         </div>

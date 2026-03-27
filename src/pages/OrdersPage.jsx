@@ -35,17 +35,37 @@ export default function OrdersPage() {
     }
   }
 
-  const updateStatus = async (id, newStatus) => {
+  const updateStatus = async (order, newStatus) => {
     try {
-      if (!isMock) await updateDoc(doc(db, 'orders', id), { status: newStatus });
-      setOrders(prev => prev.map(o => o.id === id ? { ...o, status: newStatus } : o));
+      if (!isMock) {
+          await updateDoc(doc(db, 'orders', order.id), { 
+              status: newStatus,
+              paymentStatus: 'verified'
+          });
+          
+          if (newStatus === 'accepted') {
+              // Trigger WhatsApp Confirmation via Server
+              const axios = (await import('axios')).default;
+              await axios.post('/api/whatsapp/confirm-order', {
+                  customerPhone: order.phone || '917598137660', // Fallback for demo
+                  orderDetails: {
+                      productName: order.items?.[0]?.name || order.productName,
+                      quantity: order.items?.[0]?.quantity || order.quantity,
+                      totalAmount: order.totalAmount
+                  }
+              });
+          }
+      }
+      setOrders(prev => prev.map(o => o.id === order.id ? { ...o, status: newStatus, paymentStatus: 'verified' } : o));
     } catch (err) {
-      setOrders(prev => prev.map(o => o.id === id ? { ...o, status: newStatus } : o));
+      console.error("Status Update/WhatsApp Error:", err);
+      setOrders(prev => prev.map(o => o.id === order.id ? { ...o, status: newStatus } : o));
     }
   };
 
   const statusMap = {
     preparing: { label: 'In Preparation', color: 'text-amber-500', bg: 'bg-amber-500/10' },
+    accepted: { label: 'Auspiciously Accepted', color: 'text-emerald-500', bg: 'bg-emerald-500/10' },
     shipped: { label: 'Sanctified (Transit)', color: 'text-cyan-400', bg: 'bg-cyan-500/10' },
     delivered: { label: 'Blessed Delivery', color: 'text-emerald-500', bg: 'bg-emerald-500/10' },
     canceled: { label: 'Veda Canceled', color: 'text-rose-500', bg: 'bg-rose-500/10' },
@@ -91,47 +111,118 @@ export default function OrdersPage() {
                   ))}
                 </div>
 
-                <div className="flex flex-wrap gap-8 items-center border-t border-amber-900/10 pt-6">
-                    <div>
-                        <p className="text-[8px] uppercase tracking-widest font-bold text-amber-500/30 mb-1">Total Blessing</p>
-                        <p className="text-xl font-serif text-amber-500">₹{parseFloat(order.totalAmount).toLocaleString()}</p>
+                    <div className="flex flex-wrap gap-8 items-center border-t border-amber-900/10 pt-6">
+                        <div>
+                            <p className="text-[8px] uppercase tracking-widest font-bold text-amber-500/30 mb-1">Total Blessing</p>
+                            <p className="text-xl font-serif text-amber-500">₹{parseFloat(order.totalAmount).toLocaleString()}</p>
+                        </div>
+                        <div>
+                            <p className="text-[8px] uppercase tracking-widest font-bold text-amber-500/30 mb-1">Payment Method</p>
+                            <p className="text-[10px] text-[#FBF6E9]/60 font-serif uppercase tracking-widest">{order.paymentMethod || 'Cash'}</p>
+                        </div>
+                        {order.screenshotUrl && (
+                            <div className="relative group/proof cursor-pointer" onClick={() => window.open(order.screenshotUrl)}>
+                                <p className="text-[8px] uppercase tracking-widest font-bold text-amber-500/30 mb-1">Sacred Proof</p>
+                                <img src={order.screenshotUrl} alt="GPay Proof" className="w-12 h-12 object-cover rounded-lg border border-amber-500/20 group-hover/proof:scale-150 transition-transform origin-left" />
+                                <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover/proof:opacity-100 transition-opacity rounded-lg">
+                                    <FiSearch className="text-white text-xs" />
+                                </div>
+                            </div>
+                        )}
+                        {!order.isWhatsApp && (
+                             <div className="px-4 py-2 bg-emerald-950/20 border border-emerald-950/40 rounded-xl">
+                                 <p className="text-[8px] text-emerald-500 uppercase tracking-tighter font-bold">Internal Order Verified</p>
+                             </div>
+                        )}
                     </div>
-                    <div>
-                        <p className="text-[8px] uppercase tracking-widest font-bold text-amber-500/30 mb-1">Order Date</p>
-                        <p className="text-[10px] text-[#FBF6E9]/60 font-serif">{new Date(order.createdAt).toLocaleDateString()}</p>
-                    </div>
-                    {!order.isWhatsApp && (
-                         <div className="px-4 py-2 bg-emerald-950/20 border border-emerald-950/40 rounded-xl">
-                             <p className="text-[8px] text-emerald-500 uppercase tracking-tighter font-bold">Internal Order Verified</p>
-                         </div>
-                    )}
-                </div>
-              </div>
+                    {order.notes && <p className="text-[10px] text-[#FBF6E9]/30 italic mt-6 italic">"{order.notes}"</p>}
 
-              {/* Sidebar Actions */}
+                    {/* Tracking Visualization */}
+                    <div className="pt-6 pb-2 border-t border-amber-900/10 mt-8 overflow-x-auto no-scrollbar">
+                      <div className="flex justify-between items-start min-w-[500px] px-2">
+                        {[
+                          { s: 'preparing', l: 'Preparing', i: FiBox },
+                          { s: 'accepted', l: 'Sanctified', i: FiCheck },
+                          { s: 'shipped', l: 'In-Transit', i: FiTruck },
+                          { s: 'delivered', l: 'Delivered', i: FiPackage },
+                        ].map((step, idx, arr) => {
+                          const stages = ['preparing', 'accepted', 'shipped', 'delivered'];
+                          const currentStage = stages.indexOf(order.status);
+                          const stepIdx = stages.indexOf(step.s);
+                          const isActive = stepIdx <= currentStage;
+                          const isLastCompleted = stepIdx === currentStage;
+
+                          return (
+                            <div key={step.s} className="flex-1 relative flex flex-col items-center group/step">
+                              {/* Dot/Icon Hub */}
+                              <div className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all duration-700 z-10 ${
+                                isActive ? 'bg-[#800000] border-[#800000] shadow-lg shadow-red-950/40' : 'bg-[#1A0F0A] border-amber-900/20'
+                              }`}>
+                                <step.i className={`w-4 h-4 ${isActive ? 'text-white' : 'text-[#FBF6E9]/20'}`} />
+                              </div>
+                              
+                              {/* Progress Line */}
+                              {idx < arr.length - 1 && (
+                                <div className="absolute top-5 left-1/2 w-full h-[1px] bg-amber-900/10 z-0">
+                                   <div className={`h-full bg-[#800000] transition-all duration-1000 ${isActive && stepIdx < currentStage ? 'w-full' : 'w-0'}`}></div>
+                                </div>
+                              )}
+
+                              <div className="mt-4 text-center">
+                                <p className={`text-[8.5px] uppercase tracking-[0.25em] font-bold ${isActive ? 'text-amber-500' : 'text-[#FBF6E9]/20'}`}>{step.l}</p>
+                                {isActive && isLastCompleted && (
+                                   <span className="inline-block px-3 py-1 bg-emerald-500/10 text-emerald-500 text-[6px] rounded-full uppercase mt-2 font-black animate-pulse border border-emerald-500/20">Active Stage</span>
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                </div>
+
+                {/* Sidebar Actions */}
               <div className="xl:w-64 flex flex-col gap-3 justify-center border-t xl:border-t-0 xl:border-l border-amber-900/10 pt-6 xl:pt-0 xl:pl-8">
                 {isAdmin ? (
                     <>
                         {order.status === 'preparing' && (
-                            <button onClick={() => updateStatus(order.id, 'shipped')} className="w-full py-4 bg-cyan-900/20 text-cyan-400 border border-cyan-900/30 rounded-2xl text-[9px] font-bold uppercase tracking-[0.2em] hover:bg-cyan-900 transition-all flex items-center justify-center gap-2">
+                             <button onClick={() => updateStatus(order, 'accepted')} className="w-full py-4 bg-emerald-700 text-white rounded-2xl text-[9px] font-bold uppercase tracking-[0.2em] shadow-lg shadow-emerald-900/20 hover:bg-emerald-800 transition-all flex items-center justify-center gap-2 animate-pulse">
+                                <FiCheck /> Accept Order
+                             </button>
+                        )}
+                        {order.status === 'accepted' && (
+                            <button onClick={() => updateStatus(order, 'shipped')} className="w-full py-4 bg-cyan-900/20 text-cyan-400 border border-cyan-900/30 rounded-2xl text-[9px] font-bold uppercase tracking-[0.2em] hover:bg-cyan-900 transition-all flex items-center justify-center gap-2">
                                 <FiTruck /> Sanctify (Ship)
                             </button>
                         )}
                         {order.status === 'shipped' && (
-                            <button onClick={() => updateStatus(order.id, 'delivered')} className="w-full py-4 bg-emerald-900/20 text-emerald-400 border border-emerald-900/30 rounded-2xl text-[9px] font-bold uppercase tracking-[0.2em] hover:bg-emerald-900 transition-all flex items-center justify-center gap-2">
+                            <button onClick={() => updateStatus(order, 'delivered')} className="w-full py-4 bg-emerald-900/20 text-emerald-400 border border-emerald-900/30 rounded-2xl text-[9px] font-bold uppercase tracking-[0.2em] hover:bg-emerald-900 transition-all flex items-center justify-center gap-2">
                                 <FiCheck /> Confirm Blessing
                             </button>
                         )}
-                        <button onClick={() => updateStatus(order.id, 'canceled')} className="w-full py-4 text-rose-500/40 hover:text-rose-500 text-[9px] font-bold uppercase tracking-[0.2em] transition-all">
+                        <button onClick={() => updateStatus(order, 'canceled')} className="w-full py-4 text-rose-500/40 hover:text-rose-500 text-[9px] font-bold uppercase tracking-[0.2em] transition-all">
                             Dissolve Order
                         </button>
                     </>
                 ) : (
                     <>
                         {order.status === 'delivered' && (
-                             <button onClick={() => navigate('/returns')} className="w-full py-4 bg-amber-900/20 text-amber-500 border border-amber-900/30 rounded-2xl text-[9px] font-bold uppercase tracking-[0.2em] hover:bg-amber-900/40 transition-all flex items-center justify-center gap-2">
-                                <FiRepeat /> Request Exchange
-                             </button>
+                          (() => {
+                            const deliveredAt = order.updatedAt || order.createdAt; // Assuming updatedAt is set when delivered
+                            const isWithin7Days = (new Date().getTime() - new Date(deliveredAt).getTime()) < (7 * 24 * 60 * 60 * 1000);
+                            
+                            return isWithin7Days ? (
+                              <button onClick={() => navigate('/returns', { state: { orderId: order.orderId, productName: order.productName } })} 
+                                className="w-full py-4 bg-amber-900/20 text-amber-500 border border-amber-900/30 rounded-2xl text-[9px] font-bold uppercase tracking-[0.2em] hover:bg-amber-900/40 transition-all flex items-center justify-center gap-2">
+                                <FiRepeat /> 7-Day Exchange
+                              </button>
+                            ) : (
+                               <div className="text-center py-2 px-3 bg-red-900/5 rounded-xl border border-red-900/10">
+                                 <p className="text-[7px] uppercase tracking-widest text-red-500/50 font-bold">Exchange Sanctuary Closed</p>
+                                 <p className="text-[6px] text-slate-600 mt-1 italic">Vedic 7-day period exceeded</p>
+                               </div>
+                            );
+                          })()
                         )}
                         <button onClick={() => navigate('/chatbot')} className="w-full py-4 bg-white/5 border border-white/10 text-[#FBF6E9]/40 rounded-2xl text-[9px] font-bold uppercase tracking-[0.2em] hover:bg-white/10 transition-all flex items-center justify-center gap-2">
                             <FiMessageCircle /> Heritage Inquiry

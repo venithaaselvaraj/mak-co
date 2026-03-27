@@ -1,5 +1,15 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
+
+// 🛑 Suppress the annoying generic Firebase Dynamic Links deprecation warning in the console.
+// This warning is printed automatically by the Firebase SDK for everyone, even if you don't use the feature.
+const originalConsoleWarn = console.warn;
+console.warn = function (...args) {
+    if (args[0] && typeof args[0] === 'string' && args[0].includes('Firebase Dynamic Links')) {
+        return; // Ignore this specific warning
+    }
+    originalConsoleWarn.apply(console, args);
+};
 import { getFirestore } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
 

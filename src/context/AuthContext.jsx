@@ -1,17 +1,10 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { auth, db } from '../firebase';
-import {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  signOut,
-  onAuthStateChanged,
-} from 'firebase/auth';
-import { doc, setDoc, getDoc } from 'firebase/firestore';
+import axios from 'axios';
 
 const AuthContext = createContext();
 
-// Check if we are in Mock Mode (placeholder Firebase key)
-const IS_MOCK_MODE = import.meta.env.VITE_FIREBASE_API_KEY === 'AIzaSyDemoKeyReplaceMeWithReal';
+// Using local Node server for MongoDB Atlas interactions
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api/auth';
 
 export function useAuth() {
   return useContext(AuthContext);
@@ -23,100 +16,73 @@ export function AuthProvider({ children }) {
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // --- MOCK MODE HELPERS ---
-  const mockUsers = {
-    'admin@mak.co': { uid: 'mock-admin', email: 'admin@mak.co', name: 'Proprietor', role: 'admin', phone: '+91 0000000000' },
-    'user@mak.co': { uid: 'mock-user', email: 'user@mak.co', name: 'Devotee', role: 'customer', phone: '+91 1111111111' }
-  };
+  // Note: Mock/Fallback mode has been removed in favor of direct MongoDB Atlas authentication
 
   async function signup(email, password, name, role = 'customer', phone = '') {
-    if (IS_MOCK_MODE) {
-      const newUser = { uid: `mock-${Date.now()}`, email, name, role, phone };
-      localStorage.setItem('mock_user', JSON.stringify(newUser));
-      setCurrentUser({ uid: newUser.uid, email: newUser.email });
-      setUserRole(role);
-      setUserData(newUser);
-      return { user: newUser };
+    try {
+      const response = await axios.post(`${API_URL}/signup`, { name, email, password, phone, role });
+      const { token, user } = response.data;
+      
+      localStorage.setItem('auth_token', token);
+      setCurrentUser({ uid: user.uid, email: user.email });
+      setUserRole(user.role);
+      setUserData(user);
+      
+      return response.data;
+    } catch (error) {
+      console.error('MongoDB Atlas Signup Error:', error.response?.data || error);
+      throw error.response?.data || error;
     }
-    const cred = await createUserWithEmailAndPassword(auth, email, password);
-    await setDoc(doc(db, 'users', cred.user.uid), {
-      name,
-      email,
-      role,
-      phone,
-      createdAt: new Date().toISOString(),
-    });
-    return cred;
   }
 
   async function login(email, password) {
-    if (IS_MOCK_MODE) {
-      if (password === 'password' && mockUsers[email]) {
-        const user = mockUsers[email];
-        localStorage.setItem('mock_user', JSON.stringify(user));
-        setCurrentUser({ uid: user.uid, email: user.email });
-        setUserRole(user.role);
-        setUserData(user);
-        return { user };
-      } else if (password === 'password') {
-        // Allow any login with 'password' in mock mode for ease of testing
-        const user = { uid: 'mock-custom', email, name: 'Guest Devotee', role: 'customer' };
-        localStorage.setItem('mock_user', JSON.stringify(user));
-        setCurrentUser({ uid: user.uid, email: user.email });
-        setUserRole(user.role);
-        setUserData(user);
-        return { user };
-      }
-      throw new Error('Invalid credentials (Try: password)');
+    try {
+      const response = await axios.post(`${API_URL}/login`, { email, password });
+      const { token, user } = response.data;
+      
+      localStorage.setItem('auth_token', token);
+      setCurrentUser({ uid: user.uid, email: user.email });
+      setUserRole(user.role);
+      setUserData(user);
+      
+      return response.data;
+    } catch (error) {
+      console.error('MongoDB Atlas Login Error:', error.response?.data || error);
+      throw error.response?.data || error;
     }
-    return signInWithEmailAndPassword(auth, email, password);
   }
 
   function logout() {
-    if (IS_MOCK_MODE) {
-      localStorage.removeItem('current_user');
-      setCurrentUser(null);
-      setUserRole(null);
-      setUserData(null);
-      return;
-    }
-    return signOut(auth);
+    localStorage.removeItem('auth_token');
+    setCurrentUser(null);
+    setUserRole(null);
+    setUserData(null);
   }
 
   useEffect(() => {
-    if (IS_MOCK_MODE) {
+    const checkSession = async () => {
       setLoading(true);
-      const savedUser = localStorage.getItem('current_user');
-      if (savedUser) {
-        const user = JSON.parse(savedUser);
-        setCurrentUser({ uid: user.uid, email: user.email });
-        setUserRole(user.role);
-        setUserData(user);
-      }
-      setLoading(false);
-      return;
-    }
-
-    const unsub = onAuthStateChanged(auth, async (user) => {
-      setCurrentUser(user);
-      if (user) {
+      const token = localStorage.getItem('auth_token');
+      
+      if (token) {
         try {
-          const snap = await getDoc(doc(db, 'users', user.uid));
-          if (snap.exists()) {
-            setUserRole(snap.data().role);
-            setUserData(snap.data());
-          }
-        } catch {
-          setUserRole('customer');
-          setUserData(null);
+          const response = await axios.get(`${API_URL}/me`, {
+            headers: { Authorization: `Bearer ${token}` }
+          });
+          const { user } = response.data;
+          
+          setCurrentUser({ uid: user.uid, email: user.email });
+          setUserRole(user.role);
+          setUserData(user);
+        } catch (error) {
+          console.error('Session expired or invalid:', error);
+          logout();
         }
-      } else {
-        setUserRole(null);
-        setUserData(null);
       }
       setLoading(false);
-    });
-    return unsub;
+    };
+
+    checkSession();
   }, []);
 
   const value = {
@@ -128,7 +94,7 @@ export function AuthProvider({ children }) {
     login,
     logout,
     isAdmin: userRole === 'admin',
-    isMock: IS_MOCK_MODE
+    isMock: false // Permanently disabled for MongoDB usage
   };
 
   return (

@@ -52,7 +52,7 @@ export default function Sidebar() {
             <div className="min-w-0">
               <h2 className="font-bold text-[#FBF6E9] text-sm truncate font-serif tracking-wider">M A K & CO</h2>
               <p className="text-[10px] text-amber-500/70 truncate uppercase tracking-widest font-bold">
-                {isAdmin ? 'Proprietor Suite' : 'Devotee Portal'}
+                {isAdmin ? 'Admin Dashboard' : 'User Dashboard'}
               </p>
               {isMock && (
                 <p className="text-[8px] text-amber-400 font-bold uppercase tracking-tighter animate-pulse">Testing Mode Active</p>

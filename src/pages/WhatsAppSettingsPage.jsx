@@ -40,9 +40,24 @@ export default function WhatsAppSettingsPage() {
 
   return (
     <Layout>
-      <div className="mb-8">
-        <h1 className="text-3xl font-serif text-[#FBF6E9]">Auspicious Alerts</h1>
-        <p className="text-[#FBF6E9]/40 text-[10px] uppercase tracking-[0.3em] font-bold mt-1">WhatsApp Business Cloud Integration</p>
+      <div className="mb-8 flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-serif text-[#FBF6E9]">Auspicious Alerts</h1>
+          <p className="text-[#FBF6E9]/40 text-[10px] uppercase tracking-[0.3em] font-bold mt-1">WhatsApp Business Cloud Integration</p>
+        </div>
+        <button type="button" onClick={() => {
+          setConfig({
+            phoneId: '990920720779039',
+            apiToken: 'EA_DEMO_TOKEN_PLACEHOLDER',
+            verifyToken: 'textile_shop_verify_2024',
+            webhookUrl: 'http://127.0.0.1:5000/api/whatsapp/webhook',
+            businessName: 'M A K & CO Heritage Artisan',
+            welcomeMessage: 'Blessings! Choosing a sacred collection? M A K & CO is here for you. 🙏',
+            proprietorPhone: '917598137660'
+          });
+        }} className="text-[10px] uppercase tracking-widest font-bold px-5 py-2.5 bg-amber-900/20 text-amber-500 rounded-2xl hover:bg-amber-900/40 transition-all border border-amber-900/20">
+          Fill Mock Config
+        </button>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

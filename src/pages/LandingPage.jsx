@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { FiArrowRight, FiMenu, FiX, FiInstagram, FiTwitter, FiFacebook, FiShoppingBag, FiUser, FiSearch, FiChevronRight } from 'react-icons/fi';
+import FloatingChatbot from '../components/FloatingChatbot';
 
 const navLinks = [
   { name: 'Home', href: '#' },
@@ -90,9 +91,9 @@ export default function LandingPage() {
         {/* Background Image with Parallax effect simulation */}
         <div className="absolute inset-0 z-0">
           <img 
-            src="https://images.unsplash.com/photo-1594235412411-208b04a9696c?auto=format&fit=crop&q=80&w=2000" 
-            alt="Luxury Fabric"
-            className="w-full h-full object-cover opacity-80"
+            src="/assets/landing/hero_kanchipuram_silk_1774528784605.png" 
+            alt="Luxury Maroon Kanchipuram Silk"
+            className="w-full h-full object-cover opacity-90"
           />
           <div className="absolute inset-0 bg-gradient-to-r from-white via-white/40 to-transparent"></div>
         </div>
@@ -151,9 +152,9 @@ export default function LandingPage() {
 
           <div className="grid md:grid-cols-3 gap-12 lg:gap-20">
             {[
-              { name: "Traditional Sarees", desc: "Pure Silk & Hand-woven Zari", image: "https://images.unsplash.com/photo-1583391733956-6c7827447d92?auto=format&fit=crop&q=80&w=1000" },
-              { name: "Heritage Vasti", desc: "Pure Cotton & Silk Panchakacham", image: "https://images.unsplash.com/photo-1621184455862-c163dfb30e0f?auto=format&fit=crop&q=80&w=1000" },
-              { name: "Temple Silks", desc: "Auspicious Kanchipuram for Rituals", image: "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&q=80&w=1000" }
+              { name: "Traditional Sarees", desc: "Pure Silk & Hand-woven Zari", image: "/assets/landing/banarasi_sacred_weave_1774528915946.png" },
+              { name: "Heritage Vasti (Ghoti Set)", desc: "Pure Cotton & Silk Panchakacham", image: "/assets/landing/traditional_ghoti_vasti_1774528814547.png" },
+              { name: "Temple Silks", desc: "Auspicious Kanchipuram for Rituals", image: "/assets/landing/hero_kanchipuram_silk_1774528784605.png" }
             ].map((cat, i) => (
               <div key={i} className="group cursor-pointer">
                 <div className="aspect-[3/4] overflow-hidden mb-8 relative border border-amber-900/10 shadow-sm transition-shadow hover:shadow-xl">
@@ -183,9 +184,9 @@ export default function LandingPage() {
               <div className="absolute -top-20 -left-20 w-64 h-64 bg-amber-500/10 blur-[100px] rounded-full"></div>
               <div className="aspect-[4/5] overflow-hidden rounded-sm relative z-10 border border-amber-900/20 shadow-xl">
                 <img 
-                  src="https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&q=80&w=1000" 
-                  alt="Craftsmanship"
-                  className="w-full h-full object-cover sepia-[0.3] hover:sepia-0 transition-all duration-700 opacity-90 hover:opacity-100"
+                  src="/assets/landing/weaver_sanctity_1774528857665.png" 
+                  alt="Traditional Artisan Craftsmanship"
+                  className="w-full h-full object-cover transition-all duration-700 opacity-95 hover:opacity-100"
                 />
               </div>
               {/* Floating Badge */}
@@ -242,7 +243,7 @@ export default function LandingPage() {
               <h3 className="text-3xl font-serif mb-6">M A K & CO <span className="text-amber-500 italic">Bespoke</span></h3>
               <p className="text-slate-400 mb-10 leading-relaxed font-light">Dedicated suite for shop owners. Manage multi-city inventory, track global textile trends, and automate procurement through AI-suggested supplier comparison.</p>
               <Link to="/admin/login" className="inline-flex items-center gap-3 text-[10px] uppercase tracking-[0.3em] font-bold text-amber-500 group-hover:gap-6 transition-all underline underline-offset-8 decoration-white/20">
-                Enter Proprietor Suite <FiArrowRight />
+                Enter Admin Portal <FiArrowRight />
               </Link>
             </div>
             
@@ -322,6 +323,7 @@ export default function LandingPage() {
         .animate-fadeIn { animation: fadeIn 1.2s cubic-bezier(0.23, 1, 0.32, 1) forwards; }
       `}} />
 
+      <FloatingChatbot />
     </div>
   );
 }

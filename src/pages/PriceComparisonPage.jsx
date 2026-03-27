@@ -40,6 +40,22 @@ const sampleComparisons = [
       { name: 'Mumbai Fabrics', price: 420, date: '2025-03-10' },
     ]
   },
+  {
+    product: 'Brahminical Madisar',
+    manufacturers: [
+      { name: 'Kumbakonam Silks', price: 14200, date: '2025-03-25' },
+      { name: 'Temple Weavers Guild', price: 13800, date: '2025-03-22' },
+      { name: 'Tanjore Heritage', price: 14500, date: '2025-03-18' },
+    ]
+  },
+  {
+    product: 'Sacred Angavastram',
+    manufacturers: [
+      { name: 'Heritage Weaves', price: 2500, date: '2025-03-25' },
+      { name: 'Vedic Threads', price: 2300, date: '2025-03-20' },
+      { name: 'Handloom Society', price: 2700, date: '2025-03-15' },
+    ]
+  },
 ];
 
 const sampleHistoryData = {
@@ -59,16 +75,28 @@ const sampleHistoryData = {
     { date: 'May', 'Raymond Textiles': 795, 'Arvind Mills': 745, 'Bombay Dyeing': 815 },
     { date: 'Jun', 'Raymond Textiles': 805, 'Arvind Mills': 755, 'Bombay Dyeing': 825 },
   ],
+  'Brahminical Madisar': [
+    { date: 'Jan', 'Kumbakonam Silks': 14000, 'Temple Weavers Guild': 13500, 'Tanjore Heritage': 14200 },
+    { date: 'Mar', 'Kumbakonam Silks': 14200, 'Temple Weavers Guild': 13800, 'Tanjore Heritage': 14500 },
+    { date: 'Jun', 'Kumbakonam Silks': 13900, 'Temple Weavers Guild': 13600, 'Tanjore Heritage': 14300 },
+  ],
+  'Sacred Angavastram': [
+    { date: 'Jan', 'Heritage Weaves': 2400, 'Vedic Threads': 2200, 'Handloom Society': 2600 },
+    { date: 'Mar', 'Heritage Weaves': 2500, 'Vedic Threads': 2300, 'Handloom Society': 2700 },
+    { date: 'Jun', 'Heritage Weaves': 2450, 'Vedic Threads': 2250, 'Handloom Society': 2650 },
+  ],
 };
 
 export default function PriceComparisonPage() {
   const [comparisons, setComparisons] = useState(sampleComparisons);
+  const [priceHistory, setPriceHistory] = useState({});
   const [selectedProduct, setSelectedProduct] = useState('Pure Silk Saree');
   const [activeTab, setActiveTab] = useState('comparison'); // 'comparison' | 'history'
 
   useEffect(() => {
     async function fetchData() {
       try {
+        // 1. Fetch Price Comparison (Current Bills)
         const billsSnap = await getDocs(collection(db, 'bills'));
         const bills = billsSnap.docs.map(d => d.data());
         if (bills.length > 0) {
@@ -85,9 +113,35 @@ export default function PriceComparisonPage() {
             product,
             manufacturers: manufacturers.sort((a, b) => a.price - b.price),
           }));
-          if (comps.length > 0) setComparisons(comps);
+          setComparisons(comps);
         }
-      } catch {}
+
+        // 2. Fetch Price History (Historical Logs)
+        const historySnap = await getDocs(collection(db, 'price_history'));
+        const historyList = historySnap.docs.map(d => d.data());
+        
+        if (historyList.length > 0) {
+          const historyGrouped = {};
+          historyList.forEach(h => {
+            if (!historyGrouped[h.productName]) historyGrouped[h.productName] = [];
+            
+            // Format for chart: { date, [mfrName]: price }
+            const dateObj = new Date(h.date);
+            const month = dateObj.toLocaleString('default', { month: 'short' });
+            
+            // Try to find if we already have an entry for this month
+            let entry = historyGrouped[h.productName].find(e => e.date === month);
+            if (!entry) {
+              entry = { date: month };
+              historyGrouped[h.productName].push(entry);
+            }
+            entry[h.manufacturerName] = h.price;
+          });
+          setPriceHistory(historyGrouped);
+        }
+      } catch (err) {
+          console.error("Fetch Analysis Error:", err);
+      }
     }
     fetchData();
   }, []);
@@ -113,6 +167,53 @@ export default function PriceComparisonPage() {
 
       {activeTab === 'comparison' ? (
         <div className="space-y-6">
+       {/* Price Disparity Alerts & Recent Activity */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-10">
+        <div className="bg-[#1A0F0A]/40 backdrop-blur-sm border border-amber-900/20 rounded-2xl p-8">
+            <h3 className="text-[10px] uppercase tracking-[0.3em] font-bold text-[#800000] mb-6 flex items-center gap-2">
+                <FiTrendingUp className="text-[#800000]" /> Price Disparity Alerts
+            </h3>
+            <div className="space-y-4">
+                {[
+                    { product: 'Pure Silk Saree', suppliers: 'Kanchi vs Banarasi', variance: '15% High', status: 'Reviewing', color: 'text-amber-500', bg: 'bg-amber-500/10' },
+                    { product: 'Cotton Fabric', suppliers: 'Raymond vs Arvind', variance: '5% Low', status: 'Stable', color: 'text-emerald-500', bg: 'bg-emerald-500/10' },
+                    { product: 'Temple Madisar', suppliers: 'Kumbakonam vs Weavers', variance: '22% Peak', status: 'Critical', color: 'text-rose-500', bg: 'bg-rose-500/10' },
+                ].map((alert, i) => (
+                    <div key={i} className="flex items-center justify-between p-4 bg-white/5 rounded-2xl border border-white/5 group hover:border-[#800000]/30 transition-all cursor-pointer">
+                        <div>
+                            <p className="text-[#FBF6E9] font-serif text-[11px] font-bold tracking-wider">{alert.product}</p>
+                            <p className="text-[9px] text-[#FBF6E9]/30 uppercase tracking-tighter mt-1">{alert.suppliers}</p>
+                        </div>
+                        <div className="text-right">
+                             <p className={`${alert.color} text-[10px] font-bold uppercase tracking-widest`}>{alert.variance}</p>
+                             <p className="text-[8px] text-[#FBF6E9]/20 font-bold uppercase tracking-widest mt-1">{alert.status}</p>
+                        </div>
+                    </div>
+                ))}
+            </div>
+            <button className="w-full mt-6 py-3 border border-amber-900/10 rounded-xl text-[9px] font-bold text-amber-500/40 uppercase tracking-[0.3em] hover:bg-white/5 transition-all">
+                Download Analysis Report (PDF)
+            </button>
+        </div>
+
+        <div className="bg-[#1A0F0A]/40 backdrop-blur-sm border border-amber-900/20 rounded-2xl p-8">
+            <h3 className="text-[10px] uppercase tracking-[0.3em] font-bold text-amber-500 mb-6">Heritage Log</h3>
+            <div className="space-y-4">
+            {[
+                { text: 'Sacred order received from Priya - Silk Saree × 2', time: '2 hours ago', iconColor: 'bg-[#800000]' },
+                { text: 'Textile alert: Cotton thread price increased by 5%', time: '4 hours ago', iconColor: 'bg-amber-600' },
+                { text: 'Temple bulk order confirmed - 50pc Angavastram', time: '1 day ago', iconColor: 'bg-amber-900' },
+                { text: 'Ritual return request approved - Order #1234', time: '2 days ago', iconColor: 'bg-rose-900' },
+            ].map((item, i) => (
+                <div key={i} className="flex items-center gap-4 p-4 bg-white/5 rounded-2xl border border-white/5 hover:border-amber-900/20 transition-all">
+                <div className={`w-3 h-3 rounded-full ${item.iconColor} shadow-lg shadow-black/20`}></div>
+                <p className="text-[11px] text-[#FBF6E9]/70 flex-1 tracking-wide">{item.text}</p>
+                <span className="text-[9px] uppercase tracking-tighter text-[#FBF6E9]/20 font-bold">{item.time}</span>
+                </div>
+            ))}
+            </div>
+        </div>
+      </div>
           {comparisons.map((comp, i) => {
             const cheapest = Math.min(...comp.manufacturers.map(m => m.price));
             return (
@@ -143,8 +244,8 @@ export default function PriceComparisonPage() {
                           <td className="p-4 text-slate-400 text-sm">{mfr.date}</td>
                           <td className="p-4">
                             {mfr.price === cheapest ? (
-                              <span className="inline-flex items-center gap-1 px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 rounded-full text-xs text-emerald-400 font-medium">
-                                <FiAward className="w-3 h-3" /> Cheapest
+                              <span className="inline-flex items-center gap-1 px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 rounded-full text-xs text-emerald-400 font-bold uppercase tracking-widest transition-all hover:scale-105">
+                                <FiAward className="w-3 h-3" /> Best Supplier
                               </span>
                             ) : (
                               <span className="inline-flex items-center gap-1 px-3 py-1 bg-red-500/10 border border-red-500/20 rounded-full text-xs text-red-400">

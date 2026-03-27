@@ -1,6 +1,6 @@
 import axios from 'axios';
 import dotenv from 'dotenv';
-import { chatWithGemini } from './geminiService.js';
+import { generateResponse } from './geminiService.js';
 dotenv.config();
 
 const WHATSAPP_API_URL = 'https://graph.facebook.com/v18.0';
@@ -98,7 +98,7 @@ export async function handleWebhookMessage(req, res) {
 
         // Send to Gemini AI and reply
         try {
-          const aiReply = await chatWithGemini(text);
+          const aiReply = await generateResponse(text);
           await sendWhatsAppMessage(from, aiReply);
         } catch {
           await sendWhatsAppMessage(from, 

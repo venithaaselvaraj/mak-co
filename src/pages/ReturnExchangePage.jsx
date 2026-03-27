@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import Layout from '../components/Layout';
 import { useAuth } from '../context/AuthContext';
 import { db, storage } from '../firebase';
@@ -19,6 +20,19 @@ export default function ReturnExchangePage() {
   const [photoFile, setPhotoFile] = useState(null);
   const [loading, setLoading] = useState(false);
   const [filter, setFilter] = useState('all');
+
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.state?.orderId) {
+      setForm(prev => ({ 
+        ...prev, 
+        orderId: location.state.orderId,
+        productName: location.state.productName || ''
+      }));
+      setShowForm(true);
+    }
+  }, [location.state]);
 
   useEffect(() => { fetchRequests(); }, [currentUser, isAdmin, isMock]);
 

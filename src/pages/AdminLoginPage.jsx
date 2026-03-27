@@ -37,7 +37,7 @@ export default function AdminLoginPage() {
             <span className="text-3xl font-serif">M</span>
           </div>
           <h1 className="text-4xl font-serif text-[#2D1B10]">
-            Proprietor <span className="italic text-[#800000]">Portal</span>
+            Admin <span className="italic text-[#800000]">Portal</span>
           </h1>
           <p className="text-[#5D4037]/60 mt-3 text-sm font-medium tracking-wide uppercase font-bold">M A K & CO Management</p>
         </div>

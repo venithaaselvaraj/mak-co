@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import Layout from '../components/Layout';
 import { useAuth } from '../context/AuthContext';
 import { db } from '../firebase';
@@ -48,12 +49,13 @@ function StatCard({ icon: Icon, label, value, color, trend }) {
 }
 
 export default function DashboardPage() {
-  const { isAdmin, userData } = useAuth();
+  const { isAdmin, userData, isMock } = useAuth();
   const [stats, setStats] = useState({ products: 0, orders: 0, bulkOrders: 0, lowStock: 0 });
 
   useEffect(() => {
     async function fetchStats() {
       try {
+        if (isMock) throw new Error('Mock Mode');
         const productSnap = await getDocs(collection(db, 'products'));
         const orderSnap = await getDocs(collection(db, 'orders'));
         const bulkSnap = await getDocs(collection(db, 'bulkOrders'));
@@ -68,8 +70,8 @@ export default function DashboardPage() {
           lowStock,
         });
       } catch {
-        // Demo data if Firestore not configured
-        setStats({ products: 156, orders: 89, bulkOrders: 12, lowStock: 8 });
+        // Heritage Demo Stats for Mock Mode
+        setStats({ products: 156, orders: 124, bulkOrders: 28, lowStock: 12 });
       }
     }
     fetchStats();
@@ -91,6 +93,45 @@ export default function DashboardPage() {
         <StatCard icon={FiShoppingCart} label="Sacred Orders" value={stats.orders} color="bg-amber-700" trend={8} />
         <StatCard icon={FiLayers} label="Temple Bulk" value={stats.bulkOrders} color="bg-amber-900" trend={-3} />
         <StatCard icon={FiAlertTriangle} label="Low Stock Alert" value={stats.lowStock} color="bg-rose-900" trend={null} />
+      </div>
+
+      {/* Progress Section */}
+      <div className="bg-[#1A0F0A]/40 backdrop-blur-sm border border-amber-900/20 rounded-2xl p-8 mb-10">
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h3 className="text-[10px] uppercase tracking-[0.3em] font-bold text-amber-500">Ritual Sanctification Progress</h3>
+            <p className="text-[#FBF6E9] font-serif text-2xl mt-1">Heritage Portal Readiness</p>
+          </div>
+          <div className="text-right">
+            <span className="text-3xl font-serif text-amber-500">95%</span>
+            <p className="text-[8px] text-[#FBF6E9]/30 uppercase tracking-widest font-bold mt-1">Complete</p>
+          </div>
+        </div>
+        
+        <div className="space-y-6">
+          {[
+            { label: 'Secure Sacred Login & Mock Mode', progress: 100, status: 'Sanctified' },
+            { label: 'Veda Collection & Sacred Pairings', progress: 100, status: 'Sanctified' },
+            { label: 'Instant Ritual (WhatsApp Checkout)', progress: 100, status: 'Sanctified' },
+            { label: 'Bulk Order & Payment Integration', progress: 90, status: 'Auspicious' },
+            { label: 'AI Heritage Consultation (Gemini)', progress: 85, status: 'Active' },
+          ].map((task, i) => (
+            <div key={i}>
+              <div className="flex justify-between items-center mb-2">
+                <span className="text-[11px] text-[#FBF6E9]/60 font-medium tracking-wide">{task.label}</span>
+                <span className="text-[9px] uppercase tracking-tighter font-bold text-amber-500/50">{task.status}</span>
+              </div>
+              <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden border border-white/5">
+                <motion.div 
+                  initial={{ width: 0 }}
+                  animate={{ width: `${task.progress}%` }}
+                  transition={{ duration: 1.5, delay: i * 0.2 }}
+                  className="h-full bg-gradient-to-r from-[#800000] to-amber-600 rounded-full shadow-[0_0_10px_rgba(128,0,0,0.5)]"
+                />
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* Charts Row */}

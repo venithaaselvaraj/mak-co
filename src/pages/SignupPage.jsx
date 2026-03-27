@@ -27,12 +27,19 @@ export default function SignupPage() {
       return setError('Password must be at least 6 characters');
     }
     setLoading(true);
-    try {
-      await signup(formData.email, formData.password, formData.name, formData.role, formData.phone);
-      navigate('/dashboard');
-    } catch (err) {
-      setError(err.message?.includes('already') ? 'An account with this email already exists' : 'Failed to create account. Please try again.');
-    }
+      try {
+        await signup(formData.email, formData.password, formData.name, formData.role, formData.phone);
+        navigate('/dashboard');
+      } catch (err) {
+        console.error('Signup Technical Error:', err);
+        if (err.message?.includes('already')) {
+          setError('An account with this email already exists');
+        } else if (err.code) {
+          setError(`Ritual Error (${err.code}): ${err.message}`);
+        } else {
+          setError('Failed to create account. Please contact the admin.');
+        }
+      }
     setLoading(false);
   }
 
@@ -49,7 +56,7 @@ export default function SignupPage() {
           <h1 className="text-4xl font-serif text-[#2D1B10]">
             Join the <span className="italic text-[#800000]">Atelier</span>
           </h1>
-          <p className="text-[#5D4037]/60 mt-3 text-[10px] font-bold tracking-[0.3em] uppercase opacity-50">Create your Devotee Membership</p>
+          <p className="text-[#5D4037]/60 mt-3 text-[10px] font-bold tracking-[0.3em] uppercase opacity-50">Create your User Account</p>
         </div>
 
         <div className="bg-white/40 backdrop-blur-md border border-amber-900/10 rounded-[2rem] p-10 shadow-2xl">

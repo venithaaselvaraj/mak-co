@@ -103,9 +103,21 @@ const AddProduct = () => {
                     className="bg-white/80 backdrop-blur-xl rounded-2xl p-8 border border-[#800000]/10 shadow-[0_20px_50px_rgba(128,0,0,0.1)]"
                 >
                     <div className="flex items-center justify-between mb-8 pb-6 border-b border-[#D4AF37]/20">
-                        <div>
-                            <h1 className="text-3xl font-bold text-[#800000] font-['Cinzel']">{t('admin', 'title')}</h1>
-                            <div className="h-1 w-20 bg-[#D4AF37] mt-2 rounded-full" />
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <h1 className="text-3xl font-bold text-[#800000] font-['Cinzel']">{t('admin', 'title')}</h1>
+                                <div className="h-1 w-20 bg-[#D4AF37] mt-2 rounded-full" />
+                            </div>
+                            <button type="button" onClick={() => {
+                                setFormData({
+                                    name: 'Kanchipuram Pattu Saree',
+                                    price: '18500',
+                                    category: 'Women',
+                                    description: 'A masterpiece from Kanchipuram, featuring pure mulberry silk and authentic zari, sanctified with the temple-red hue of tradition.'
+                                });
+                            }} className="text-[10px] uppercase tracking-widest font-bold px-4 py-2 bg-[#800000]/10 text-[#800000] rounded-full hover:bg-[#800000] hover:text-[#FDFBF7] transition-all border border-[#800000]/20">
+                                Fill Sample Data
+                            </button>
                         </div>
                     </div>
 

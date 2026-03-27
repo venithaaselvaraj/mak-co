@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
 import ProtectedRoute from './components/ProtectedRoute';
+import FloatingChatbot from './components/FloatingChatbot';
 
 // Pages
 import LandingPage from './pages/LandingPage';
@@ -44,17 +45,29 @@ class AppErrorBoundary extends Component {
   }
 }
 
-// Separate component for the dashboard switch to avoid complex render props in Routes
+// Separate component for the dashboard switch
 function DashboardRouter() {
   const { userRole, loading } = useAuth();
-  
   if (loading) return (
     <div className="min-h-screen bg-[#FBF6E9] flex flex-col items-center justify-center font-serif italic text-[#800000]">
       Consulting the sanctity...
     </div>
   );
-
   return userRole === 'admin' ? <DashboardPage /> : <UserDashboardPage />;
+}
+
+// Routes where chatbot should NOT appear
+const ADMIN_ROUTES = ['/bills', '/price-comparison', '/whatsapp-settings', '/products'];
+const AUTH_ROUTES = ['/', '/login', '/admin/login', '/user/login', '/signup'];
+
+// Smart chatbot — visible on all user pages, hidden for admins and on auth/landing pages
+function GlobalChatbot() {
+  const { userRole, userData } = useAuth();
+  const location = useLocation();
+  const isAdminPage = ADMIN_ROUTES.some(r => location.pathname.startsWith(r));
+  const isAuthPage = AUTH_ROUTES.includes(location.pathname);
+  if (!userData || userRole === 'admin' || isAdminPage || isAuthPage) return null;
+  return <FloatingChatbot />;
 }
 
 function App() {
@@ -81,8 +94,8 @@ function App() {
               <Route path="/product/:id" element={
                 <ProtectedRoute><ProductDetailsPage /></ProtectedRoute>
               } />
-              
-              {/* Other Common Routes */}
+
+              {/* Common User Routes */}
               <Route path="/products" element={<ProtectedRoute><ProductManagement /></ProtectedRoute>} />
               <Route path="/orders" element={<ProtectedRoute><OrdersPage /></ProtectedRoute>} />
               <Route path="/bulk-orders" element={<ProtectedRoute><BulkOrdersPage /></ProtectedRoute>} />
@@ -97,6 +110,9 @@ function App() {
               {/* Catch-all */}
               <Route path="*" element={<Navigate to="/" />} />
             </Routes>
+
+            {/* Global Floating Chatbot — visible on all user pages */}
+            <GlobalChatbot />
           </Router>
         </CartProvider>
       </AuthProvider>

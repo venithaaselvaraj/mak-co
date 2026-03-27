@@ -6,7 +6,7 @@ import { collection, addDoc, getDocs, updateDoc, doc, query, orderBy } from 'fir
 import { FiLayers, FiCheck, FiX, FiCalendar, FiMapPin, FiPackage } from 'react-icons/fi';
 
 export default function BulkOrdersPage() {
-  const { isAdmin, currentUser } = useAuth();
+  const { isAdmin, currentUser, isMock } = useAuth();
   const [bulkOrders, setBulkOrders] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({
@@ -19,12 +19,29 @@ export default function BulkOrdersPage() {
   async function fetchBulkOrders() {
     try {
       const snap = await getDocs(query(collection(db, 'bulkOrders'), orderBy('createdAt', 'desc')));
-      setBulkOrders(snap.docs.map(d => ({ id: d.id, ...d.data() })));
+      const docs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      
+      if (docs.length === 0 && isMock) {
+        setBulkOrders([
+          { id: '1', productName: 'Polyester Fabric', requiredQuantity: 500, deliveryLocation: 'Chennai Warehouse', requiredDate: '2025-04-15', status: 'pending', advancePaid: false, notes: 'Urgent requirement for event', createdAt: '2025-03-20' },
+          { id: '2', productName: 'Silk Thread Collection', requiredQuantity: 1000, deliveryLocation: 'Coimbatore Factory', requiredDate: '2025-04-20', status: 'confirmed', advancePaid: true, notes: 'Wedding season stock', createdAt: '2025-03-18' },
+          { id: '3', productName: 'Cotton Saree Bundle', requiredQuantity: 200, deliveryLocation: 'Madurai Showroom', requiredDate: '2025-04-10', status: 'processing', advancePaid: true, notes: '', createdAt: '2025-03-15' },
+          { id: '4', productName: 'Temple Dhoti Bundle (100pc)', requiredQuantity: 100, deliveryLocation: 'Tirumala Devasthanam', requiredDate: '2025-04-05', status: 'pending', advancePaid: false, notes: 'Sacred white with small gold border.', createdAt: '2025-03-25' },
+          { id: '5', productName: 'Priestly Angavastram (Bulk)', requiredQuantity: 300, deliveryLocation: 'Kashi Vishwanath Temple', requiredDate: '2025-04-12', status: 'confirmed', advancePaid: true, notes: 'Standard 2.5m length, pure cotton.', createdAt: '2025-03-22' },
+          { id: '6', productName: 'Wedding Madisar Silk Saree (Bulk)', requiredQuantity: 50, deliveryLocation: 'Chennai Wedding Hall', requiredDate: '2025-05-01', status: 'pending', advancePaid: false, notes: 'Uniform color code: Maroon/Gold', createdAt: '2025-03-24' },
+        ]);
+      } else {
+        setBulkOrders(docs);
+      }
     } catch {
+      // Robust Fallback: Show all bulk samples even if system errors occur
       setBulkOrders([
         { id: '1', productName: 'Polyester Fabric', requiredQuantity: 500, deliveryLocation: 'Chennai Warehouse', requiredDate: '2025-04-15', status: 'pending', advancePaid: false, notes: 'Urgent requirement for event', createdAt: '2025-03-20' },
         { id: '2', productName: 'Silk Thread Collection', requiredQuantity: 1000, deliveryLocation: 'Coimbatore Factory', requiredDate: '2025-04-20', status: 'confirmed', advancePaid: true, notes: 'Wedding season stock', createdAt: '2025-03-18' },
         { id: '3', productName: 'Cotton Saree Bundle', requiredQuantity: 200, deliveryLocation: 'Madurai Showroom', requiredDate: '2025-04-10', status: 'processing', advancePaid: true, notes: '', createdAt: '2025-03-15' },
+        { id: '4', productName: 'Temple Dhoti Bundle (100pc)', requiredQuantity: 100, deliveryLocation: 'Tirumala Devasthanam', requiredDate: '2025-04-05', status: 'pending', advancePaid: false, notes: 'Sacred white with small gold border.', createdAt: '2025-03-25' },
+        { id: '5', productName: 'Priestly Angavastram (Bulk)', requiredQuantity: 300, deliveryLocation: 'Kashi Vishwanath Temple', requiredDate: '2025-04-12', status: 'confirmed', advancePaid: true, notes: 'Standard 2.5m length, pure cotton.', createdAt: '2025-03-22' },
+        { id: '6', productName: 'Wedding Madisar Silk Saree (Bulk)', requiredQuantity: 50, deliveryLocation: 'Chennai Wedding Hall', requiredDate: '2025-05-01', status: 'pending', advancePaid: false, notes: 'Uniform color code: Maroon/Gold', createdAt: '2025-03-24' },
       ]);
     }
   }
@@ -47,8 +64,24 @@ export default function BulkOrdersPage() {
       });
       setShowForm(false);
       setForm({ productName: '', requiredQuantity: '', deliveryLocation: '', requiredDate: '', notes: '' });
+      setShowForm(false);
+      setForm({ productName: '', requiredQuantity: '', deliveryLocation: '', requiredDate: '', notes: '' });
       fetchBulkOrders();
-    } catch {
+      
+      // NEW: Redirect to WhatsApp for Bulk Inquiry
+      const config = JSON.parse(localStorage.getItem('whatsapp_config') || '{}');
+      const proprietorNumber = config.proprietorPhone || '917598137660';
+      const text = `🧵 *M A K & CO - BULK ORDER REQUEST* 🧵\n\n` +
+                 `📦 *Product:* ${form.productName}\n` +
+                 `🔢 *Quantity:* ${form.requiredQuantity}\n` +
+                 `📍 *Location:* ${form.deliveryLocation}\n` +
+                 `📅 *Required Date:* ${form.requiredDate}\n` +
+                 `📝 *Notes:* ${form.notes || 'None'}\n\n` +
+                 `Please review and provide the *Advance Payment* details.`;
+      
+      window.open(`https://wa.me/${proprietorNumber}?text=${encodeURIComponent(text)}`, '_blank');
+    } catch (error) {
+      console.error("Bulk Order Error:", error);
       setShowForm(false);
     }
     setLoading(false);
@@ -98,7 +131,24 @@ export default function BulkOrdersPage() {
       {/* Bulk Order Form */}
       {showForm && (
         <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 mb-6">
-          <h3 className="text-lg font-semibold text-white mb-4">New Bulk Order</h3>
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-semibold text-white">New Bulk Order</h3>
+            <button type="button" onClick={() => {
+              const samples = [
+                { productName: 'Pure Silk Fabric (Bulk Rolls)', requiredQuantity: '500', deliveryLocation: 'Heritage Weaving Center, Coimbatore', notes: 'Require pure mulberry silk with gold zari borders.' },
+                { productName: 'Temple Dhoti Bundle (100pc)', requiredQuantity: '100', deliveryLocation: 'Tirumala Devasthanam', notes: 'Standard 4-cubit white.' },
+                { productName: 'Priestly Angavastram (Bulk)', requiredQuantity: '300', deliveryLocation: 'Kashi Vishwanath Temple', notes: 'Golden border, pure cotton.' }
+              ];
+              const nextIdx = (window._bulkIdx || 0) % samples.length;
+              setForm({
+                ...samples[nextIdx],
+                requiredDate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+              });
+              window._bulkIdx = (window._bulkIdx || 0) + 1;
+            }} className="text-[10px] uppercase tracking-widest font-bold px-4 py-2 bg-amber-500/10 text-amber-400 rounded-xl hover:bg-amber-500/20 transition-all border border-amber-500/20">
+              Fill Sample
+            </button>
+          </div>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>

@@ -30,18 +30,30 @@ export default function ProductManagement() {
 
   async function fetchProducts() {
     try {
-      if (isMock) throw new Error('Mock Mode');
+      if (isMock) {
+        const saved = localStorage.getItem('mock_products');
+        if (saved) {
+          setProducts(JSON.parse(saved));
+          return;
+        }
+        throw new Error('No saved mock products');
+      }
       const snap = await getDocs(query(collection(db, 'products'), orderBy('createdAt', 'desc')));
       setProducts(snap.docs.map(d => ({ id: d.id, ...d.data() })));
     } catch {
       // Heritage Demo Data
-      setProducts([
-        { id: '1', productName: 'Kanchipuram Pattu Saree', fabricType: 'Pure Silk', category: 'Saree', color: 'Kumkum Red & Gold', manufacturerName: 'Kanchi Heritage', price: 18500, stockQuantity: 12, imageUrl: '' },
-        { id: '2', productName: 'Pure White Vedic Vasti', fabricType: 'Handloom Cotton', category: 'Vasti (Dhoti)', color: 'Bleached White', manufacturerName: 'Coimbatore Handlooms', price: 1200, stockQuantity: 45, imageUrl: '' },
-        { id: '3', productName: 'Brahminical Madisar Saree', fabricType: 'Pure Silk', category: 'Madisar', color: 'Deep Maroon', manufacturerName: 'Kumbakonam Silks', price: 14200, stockQuantity: 8, imageUrl: '' },
-        { id: '4', productName: 'Sacred Angavastram Set', fabricType: 'Handloom Cotton', category: 'Angavastram', color: 'Ivory & Gold', manufacturerName: 'Heritage Weaves', price: 2500, stockQuantity: 30, imageUrl: '' },
-        { id: '5', productName: 'Silk Pavadai Sattai', fabricType: 'Pure Silk', category: 'Pavadai Sattai', color: 'Mustard Yellow', manufacturerName: 'Temple Weavers', price: 5800, stockQuantity: 15, imageUrl: '' },
-      ]);
+      const demoData = [
+        { id: '1', productName: 'Kanchipuram Pattu Saree', fabricType: 'Pure Silk', category: 'Saree', color: 'Kumkum Red & Gold', manufacturerName: 'Kanchi Heritage', price: 18500, stockQuantity: 12, imageUrl: '/assets/products/kanchipuram.png', name: 'Kanchipuram Pattu Saree', description: 'Exquisite hand-woven pure silk saree with gold zari border.' },
+        { id: '2', productName: 'Pure White Vedic Vasti', fabricType: 'Handloom Cotton', category: 'Vasti (Dhoti)', color: 'Bleached White', manufacturerName: 'Coimbatore Handlooms', price: 1200, stockQuantity: 45, imageUrl: '/assets/products/vasti.png', name: 'Pure White Vedic Vasti', description: 'Traditional handloom cotton dhoti for daily puja and rituals.' },
+        { id: '3', productName: 'Brahminical Madisar Saree', fabricType: 'Pure Silk', category: 'Madisar', color: 'Deep Maroon', manufacturerName: 'Kumbakonam Silks', price: 14200, stockQuantity: 8, imageUrl: '/assets/products/madisar.png', name: 'Brahminical Madisar Saree', description: 'Traditional 9-yard madisar drape for sacred ceremonies.' },
+        { id: '4', productName: 'Sacred Angavastram Set', fabricType: 'Handloom Cotton', category: 'Angavastram', color: 'Ivory & Gold', manufacturerName: 'Heritage Weaves', price: 2500, stockQuantity: 30, imageUrl: '/assets/products/angavastram.png', name: 'Sacred Angavastram Set', description: 'Ivory cotton shawl with gold border for temple visits.' },
+        { id: '5', productName: 'Banarasi Silk Saree', fabricType: 'Banarasi Silk', category: 'Saree', color: 'Royal Blue & Gold', manufacturerName: 'Varanasi Looms', price: 22000, stockQuantity: 6, imageUrl: '/assets/products/banarasi.png', name: 'Banarasi Silk Saree', description: 'Opulent Banarasi silk with brocade golden motifs.' },
+        { id: '6', productName: 'Dhoti with Silk Border', fabricType: 'Cotton-Silk', category: 'Vasti (Dhoti)', color: 'White & Gold', manufacturerName: 'Salem Handlooms', price: 1850, stockQuantity: 25, imageUrl: '/assets/products/dhoti_border.png', name: 'Dhoti with Silk Border', description: 'Fine cotton dhoti with a vibrant silk accent border.' },
+        { id: '7', productName: 'Cotton Saree Half Silk', fabricType: 'Cotton-Silk', category: 'Saree', color: 'Peacock Green', manufacturerName: 'Gadwal Weavers', price: 4500, stockQuantity: 18, imageUrl: '/assets/products/kanchipuram.png', name: 'Cotton Saree Half Silk', description: 'Lightweight saree for everyday wear with temple motifs.' },
+        { id: '8', productName: 'Pure Cotton Vasti', fabricType: 'Handloom Cotton', category: 'Vasti (Dhoti)', color: 'Natural White', manufacturerName: 'Erode Handlooms', price: 950, stockQuantity: 60, imageUrl: '/assets/products/vasti.png', name: 'Pure Cotton Vasti', description: 'Everyday unbleached cotton dhoti for puja rituals.' },
+      ];
+      setProducts(demoData);
+      if (isMock) localStorage.setItem('mock_products', JSON.stringify(demoData));
     }
   }
 
@@ -65,6 +77,19 @@ export default function ProductManagement() {
     setShowModal(true);
   }
 
+  function fillSample() {
+    setForm({
+      productName: 'Premium Banarasi Silk Saree',
+      fabricType: 'Pure Silk',
+      category: 'Saree',
+      color: 'Sacred Gold & Crimson',
+      manufacturerName: 'Varanasi Heritage Weavers',
+      price: '24500',
+      stockQuantity: '15',
+      imageUrl: ''
+    });
+  }
+
   function openEdit(product) {
     setForm(product);
     setEditingId(product.id);
@@ -81,6 +106,8 @@ export default function ProductManagement() {
         // Mock save logic
         const newProduct = {
           ...form,
+          name: form.productName, // For User View compatibility
+          description: `${form.fabricType} - ${form.color}`, // For User View
           id: editingId || Date.now().toString(),
           price: Number(form.price),
           stockQuantity: Number(form.stockQuantity),
@@ -88,10 +115,16 @@ export default function ProductManagement() {
           updatedAt: new Date().toISOString(),
         };
         if (editingId) {
-          setProducts(prev => prev.map(p => p.id === editingId ? newProduct : p));
+          const updatedList = products.map(p => p.id === editingId ? newProduct : p);
+          setProducts(updatedList);
+          localStorage.setItem('mock_products', JSON.stringify(updatedList));
+          localStorage.setItem('mock_products_version', 'v2_saree_dhoti');
         } else {
           newProduct.createdAt = new Date().toISOString();
-          setProducts(prev => [newProduct, ...prev]);
+          const updatedList = [newProduct, ...products];
+          setProducts(updatedList);
+          localStorage.setItem('mock_products', JSON.stringify(updatedList));
+          localStorage.setItem('mock_products_version', 'v2_saree_dhoti');
         }
         setShowModal(false);
       } else {
@@ -114,7 +147,26 @@ export default function ProductManagement() {
           await updateDoc(doc(db, 'products', editingId), data);
         } else {
           data.createdAt = new Date().toISOString();
-          await addDoc(collection(db, 'products'), data);
+          const docRef = await addDoc(collection(db, 'products'), data);
+          // NEW: Log Initial Price
+          await addDoc(collection(db, 'price_history'), {
+            productId: docRef.id,
+            productName: data.productName,
+            manufacturerName: data.manufacturerName,
+            price: data.price,
+            date: new Date().toISOString()
+          });
+        }
+        
+        // NEW: Always log price change on edit
+        if (editingId) {
+          await addDoc(collection(db, 'price_history'), {
+            productId: editingId,
+            productName: data.productName,
+            manufacturerName: data.manufacturerName,
+            price: data.price,
+            date: new Date().toISOString()
+          });
         }
         setShowModal(false);
         fetchProducts();
@@ -235,7 +287,15 @@ export default function ProductManagement() {
         <div className="fixed inset-0 bg-[#0A0503]/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto" onClick={() => setShowModal(false)}>
           <div className="bg-[#1A0F0A] border border-amber-900/20 rounded-3xl w-full max-w-lg my-auto" onClick={e => e.stopPropagation()}>
             <div className="flex items-center justify-between p-6 border-b border-amber-900/10">
-              <h2 className="text-xl font-serif text-[#FBF6E9]">{editingId ? 'Edit Heritage Piece' : 'Add New Attire'}</h2>
+              <div className="flex items-center gap-4">
+                <h2 className="text-xl font-serif text-[#FBF6E9]">{editingId ? 'Edit Heritage Piece' : 'Add New Attire'}</h2>
+                {!editingId && (
+                  <button type="button" onClick={fillSample}
+                    className="text-[9px] uppercase tracking-[0.2em] font-bold px-3 py-1.5 bg-amber-900/20 text-amber-500 rounded-lg hover:bg-amber-900/40 transition-all border border-amber-900/20">
+                    Fill Sample
+                  </button>
+                )}
+              </div>
               <button onClick={() => setShowModal(false)} className="text-amber-500/40 hover:text-[#FBF6E9] transition-colors"><FiX className="w-6 h-6" /></button>
             </div>
             <form onSubmit={handleSubmit} className="p-6 space-y-5">
