@@ -169,18 +169,7 @@ export default function ChatbotPage() {
         </div>
       </div>
 
-      <style jsx>{`
-        .custom-scrollbar::-webkit-scrollbar {
-          width: 5px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-          background: rgba(255, 255, 255, 0.02);
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: rgba(128, 0, 0, 0.3);
-          border-radius: 10px;
-        }
-      `}</style>
     </Layout>
   );
 }
+

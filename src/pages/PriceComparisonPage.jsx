@@ -11,41 +11,28 @@ const sampleComparisons = [
   {
     product: 'Pure Silk Saree',
     manufacturers: [
-      { name: 'Kanchi Silks', price: 1500, date: '2025-03-15' },
-      { name: 'Banarasi Hub', price: 1400, date: '2025-03-12' },
-      { name: 'Mysore Silk Co', price: 1550, date: '2025-03-10' },
+      { name: 'Kanchi Heritage Silks', price: 18500, date: '2025-03-15' },
+      { name: 'Banarasi Hub Weavers', price: 17200, date: '2025-03-12' },
+      { name: 'Mysore Royal Silks', price: 19500, date: '2025-03-10' },
+      { name: 'Tanjore Sacred Weaves', price: 16800, date: '2025-03-08' },
     ]
   },
   {
-    product: 'Cotton Shirt Fabric',
+    product: 'Vedic Cotton Vasti',
     manufacturers: [
-      { name: 'Raymond Textiles', price: 800, date: '2025-03-15' },
-      { name: 'Arvind Mills', price: 750, date: '2025-03-14' },
-      { name: 'Bombay Dyeing', price: 820, date: '2025-03-11' },
+      { name: 'Coimbatore Handlooms', price: 1200, date: '2025-03-15' },
+      { name: 'Erode Weaver Society', price: 1150, date: '2025-03-14' },
+      { name: 'Madurai Heritage', price: 1300, date: '2025-03-11' },
+      { name: 'Salem Textile Guild', price: 1050, date: '2025-03-09' },
     ]
   },
   {
-    product: 'Linen Kurta Material',
-    manufacturers: [
-      { name: 'Linen Club', price: 1100, date: '2025-03-15' },
-      { name: 'Pure Linen Co', price: 1050, date: '2025-03-13' },
-      { name: 'Fab India Supply', price: 1200, date: '2025-03-09' },
-    ]
-  },
-  {
-    product: 'Georgette Dupatta',
-    manufacturers: [
-      { name: 'Surat Textiles', price: 450, date: '2025-03-15' },
-      { name: 'Delhi Fabric House', price: 500, date: '2025-03-12' },
-      { name: 'Mumbai Fabrics', price: 420, date: '2025-03-10' },
-    ]
-  },
-  {
-    product: 'Brahminical Madisar',
+    product: 'Traditional Madisar',
     manufacturers: [
       { name: 'Kumbakonam Silks', price: 14200, date: '2025-03-25' },
       { name: 'Temple Weavers Guild', price: 13800, date: '2025-03-22' },
       { name: 'Tanjore Heritage', price: 14500, date: '2025-03-18' },
+      { name: 'Mayiladuthurai Silks', price: 14000, date: '2025-03-15' },
     ]
   },
   {
@@ -54,36 +41,40 @@ const sampleComparisons = [
       { name: 'Heritage Weaves', price: 2500, date: '2025-03-25' },
       { name: 'Vedic Threads', price: 2300, date: '2025-03-20' },
       { name: 'Handloom Society', price: 2700, date: '2025-03-15' },
+      { name: 'Pure Cotton Artisans', price: 2400, date: '2025-03-10' },
+    ]
+  },
+  {
+    product: 'Premium Linen Fabric',
+    manufacturers: [
+      { name: 'Linen Masterworks', price: 1100, date: '2025-03-15' },
+      { name: 'Pure Linen Co', price: 1050, date: '2025-03-13' },
+      { name: 'Fab India Supply', price: 1200, date: '2025-03-09' },
     ]
   },
 ];
 
 const sampleHistoryData = {
   'Pure Silk Saree': [
-    { date: 'Jan', 'Kanchi Silks': 1450, 'Banarasi Hub': 1380, 'Mysore Silk Co': 1500 },
-    { date: 'Feb', 'Kanchi Silks': 1480, 'Banarasi Hub': 1420, 'Mysore Silk Co': 1520 },
-    { date: 'Mar', 'Kanchi Silks': 1500, 'Banarasi Hub': 1400, 'Mysore Silk Co': 1550 },
-    { date: 'Apr', 'Kanchi Silks': 1520, 'Banarasi Hub': 1380, 'Mysore Silk Co': 1580 },
-    { date: 'May', 'Kanchi Silks': 1490, 'Banarasi Hub': 1350, 'Mysore Silk Co': 1540 },
-    { date: 'Jun', 'Kanchi Silks': 1510, 'Banarasi Hub': 1400, 'Mysore Silk Co': 1560 },
+    { date: 'Jan', 'Kanchi Heritage Silks': 17500, 'Banarasi Hub Weavers': 16800, 'Mysore Royal Silks': 18000, 'Tanjore Sacred Weaves': 16000 },
+    { date: 'Feb', 'Kanchi Heritage Silks': 18000, 'Banarasi Hub Weavers': 17000, 'Mysore Royal Silks': 18500, 'Tanjore Sacred Weaves': 16500 },
+    { date: 'Mar', 'Kanchi Heritage Silks': 18500, 'Banarasi Hub Weavers': 17200, 'Mysore Royal Silks': 19500, 'Tanjore Sacred Weaves': 16800 },
+    { date: 'Apr', 'Kanchi Heritage Silks': 18200, 'Banarasi Hub Weavers': 16900, 'Mysore Royal Silks': 19000, 'Tanjore Sacred Weaves': 16600 },
   ],
-  'Cotton Shirt Fabric': [
-    { date: 'Jan', 'Raymond Textiles': 780, 'Arvind Mills': 720, 'Bombay Dyeing': 800 },
-    { date: 'Feb', 'Raymond Textiles': 790, 'Arvind Mills': 740, 'Bombay Dyeing': 810 },
-    { date: 'Mar', 'Raymond Textiles': 800, 'Arvind Mills': 750, 'Bombay Dyeing': 820 },
-    { date: 'Apr', 'Raymond Textiles': 810, 'Arvind Mills': 760, 'Bombay Dyeing': 830 },
-    { date: 'May', 'Raymond Textiles': 795, 'Arvind Mills': 745, 'Bombay Dyeing': 815 },
-    { date: 'Jun', 'Raymond Textiles': 805, 'Arvind Mills': 755, 'Bombay Dyeing': 825 },
+  'Vedic Cotton Vasti': [
+    { date: 'Jan', 'Coimbatore Handlooms': 1100, 'Erode Weaver Society': 1050, 'Madurai Heritage': 1200, 'Salem Textile Guild': 980 },
+    { date: 'Feb', 'Coimbatore Handlooms': 1150, 'Erode Weaver Society': 1100, 'Madurai Heritage': 1250, 'Salem Textile Guild': 1020 },
+    { date: 'Mar', 'Coimbatore Handlooms': 1200, 'Erode Weaver Society': 1150, 'Madurai Heritage': 1300, 'Salem Textile Guild': 1050 },
   ],
-  'Brahminical Madisar': [
-    { date: 'Jan', 'Kumbakonam Silks': 14000, 'Temple Weavers Guild': 13500, 'Tanjore Heritage': 14200 },
-    { date: 'Mar', 'Kumbakonam Silks': 14200, 'Temple Weavers Guild': 13800, 'Tanjore Heritage': 14500 },
-    { date: 'Jun', 'Kumbakonam Silks': 13900, 'Temple Weavers Guild': 13600, 'Tanjore Heritage': 14300 },
+  'Traditional Madisar': [
+    { date: 'Jan', 'Kumbakonam Silks': 13500, 'Temple Weavers Guild': 13000, 'Tanjore Heritage': 13800, 'Mayiladuthurai Silks': 13200 },
+    { date: 'Feb', 'Kumbakonam Silks': 13800, 'Temple Weavers Guild': 13400, 'Tanjore Heritage': 14200, 'Mayiladuthurai Silks': 13600 },
+    { date: 'Mar', 'Kumbakonam Silks': 14200, 'Temple Weavers Guild': 13800, 'Tanjore Heritage': 14500, 'Mayiladuthurai Silks': 14000 },
   ],
   'Sacred Angavastram': [
-    { date: 'Jan', 'Heritage Weaves': 2400, 'Vedic Threads': 2200, 'Handloom Society': 2600 },
-    { date: 'Mar', 'Heritage Weaves': 2500, 'Vedic Threads': 2300, 'Handloom Society': 2700 },
-    { date: 'Jun', 'Heritage Weaves': 2450, 'Vedic Threads': 2250, 'Handloom Society': 2650 },
+    { date: 'Jan', 'Heritage Weaves': 2300, 'Vedic Threads': 2100, 'Handloom Society': 2500, 'Pure Cotton Artisans': 2200 },
+    { date: 'Feb', 'Heritage Weaves': 2400, 'Vedic Threads': 2200, 'Handloom Society': 2600, 'Pure Cotton Artisans': 2300 },
+    { date: 'Mar', 'Heritage Weaves': 2500, 'Vedic Threads': 2300, 'Handloom Society': 2700, 'Pure Cotton Artisans': 2400 },
   ],
 };
 

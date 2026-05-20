@@ -86,14 +86,14 @@ export default function UserDashboardPage() {
                     setProducts(JSON.parse(saved));
                 } else {
                     setProducts([
-                        { id: '1', name: 'Kanchipuram Pattu Saree', price: 18500, category: 'Women', imageUrl: '/assets/products/kanchipuram.png', description: 'Exquisite hand-woven pure silk with gold zari border.' },
-                        { id: '2', name: 'Pure White Vedic Vasti', price: 1200, category: 'Men', imageUrl: '/assets/products/vasti.png', description: 'Traditional handloom cotton dhoti for daily puja.' },
-                        { id: '3', name: 'Brahminical Madisar Saree', price: 14200, category: 'Women', imageUrl: '/assets/products/madisar.png', description: '9-yard Madisar drape for sacred ceremonies.' },
-                        { id: '4', name: 'Sacred Angavastram Set', price: 2500, category: 'Men', imageUrl: '/assets/products/angavastram.png', description: 'Ivory cotton shawl with gold border for temple.' },
-                        { id: '5', name: 'Banarasi Silk Saree', price: 22000, category: 'Women', imageUrl: '/assets/products/banarasi.png', description: 'Opulent Banarasi silk with brocade golden motifs.' },
-                        { id: '6', name: 'Dhoti with Silk Border', price: 1850, category: 'Men', imageUrl: '/assets/products/dhoti_border.png', description: 'Cotton dhoti with vibrant silk accent border.' },
-                        { id: '7', name: 'Cotton Saree Half Silk', price: 4500, category: 'Women', imageUrl: '/assets/products/kanchipuram.png', description: 'Lightweight saree for everyday wear with temple motifs.' },
-                        { id: '8', name: 'Pure Cotton Vasti', price: 950, category: 'Men', imageUrl: '/assets/products/vasti.png', description: 'Everyday unbleached cotton dhoti for puja rituals.' },
+                        { id: '1', name: 'Brahminical 9-Yard Kumbakonam Madisar Saree', price: 18500, category: 'Women', imageUrl: '/assets/products/madisar.png', description: 'Traditional Brahmin 9-yard Madisar drape with rich gold zari temple borders, crafted for sacred ceremonies.' },
+                        { id: '2', name: 'Sacred White Brahmin Panchakacham Veshti Set', price: 1800, category: 'Men', imageUrl: '/assets/products/vasti.png', description: 'Traditional 10-yards white Veshti with fine 5-inch gold zari border, worn by priests and archakas.' },
+                        { id: '3', name: 'Lord Venkateswara Swamy Peethambaram Vastram', price: 24500, category: 'Men', imageUrl: '/assets/landing/hero_kanchipuram_silk_1774528784605.png', description: 'Magnificent heavy-weight silk drape decorated with intricate motifs, customized for temple Swamy statues.' },
+                        { id: '4', name: 'Temple Utsavar Deity Silk Pavadai Vastram Set', price: 15500, category: 'Accessories', imageUrl: '/assets/products/banarasi.png', description: 'Exquisite silk micro-woven pavadai drape tailored for temple deity idol alankaram.' },
+                        { id: '5', name: 'Goddess Mahalakshmi Idol Traditional Silk Saree', price: 22000, category: 'Women', imageUrl: '/assets/products/kanchipuram.png', description: 'Splendid traditional silk saree designed for the sacred decoration and draping of Goddess temple statues.' },
+                        { id: '6', name: 'Traditional Vedic Gurukul Cotton Veshti Set', price: 1200, category: 'Men', imageUrl: '/assets/products/dhoti_border.png', description: 'Traditional unbleached single cotton Veshti with narrow maroon borders, designed for temple daily archana.' },
+                        { id: '7', name: 'Brahminical Grahapravesam Silk Madisar Saree', price: 19800, category: 'Women', imageUrl: '/assets/products/madisar.png', description: '9-yard pure mulberry silk saree worn traditionally for Brahmin weddings and Grihapravesam rituals.' },
+                        { id: '8', name: 'Swamy Deity Brass Alankaram Shringa Vasti', price: 16500, category: 'Accessories', imageUrl: '/assets/landing/traditional_ghoti_vasti_1774528814547.png', description: 'Fine metallic gold tissue Veshti designed to drape brass temple deity statues during festival processions.' },
                     ]);
                 }
             } finally {

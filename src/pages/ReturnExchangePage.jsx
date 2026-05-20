@@ -43,12 +43,21 @@ export default function ReturnExchangePage() {
         ? query(collection(db, 'returns'), orderBy('createdAt', 'desc'))
         : query(collection(db, 'returns'), where('userId', '==', currentUser?.uid), orderBy('createdAt', 'desc'));
       const snap = await getDocs(q);
-      setRequests(snap.docs.map(d => ({ id: d.id, ...d.data() })));
+      const docs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      if (docs.length === 0) {
+        throw new Error('Empty database');
+      }
+      setRequests(docs);
     } catch {
       setRequests([
-        { id: '1', orderId: 'ORD-1088', productName: 'Kanchipuram Silk Saree', requestType: 'exchange', reason: 'Size too large, need Medium scale.', status: 'in-transit', photoUrl: '', createdAt: new Date(Date.now() - 86400000).toISOString() },
-        { id: '2', orderId: 'ORD-2022', productName: 'Pure Cotton Vasti', requestType: 'return', reason: 'Small weaving defect on border.', status: 'approved', photoUrl: '', createdAt: new Date(Date.now() - 172800000).toISOString() },
-        { id: '3', orderId: 'ORD-3051', productName: 'Linen Angavastram', requestType: 'exchange', reason: 'Color variance - requested Vedic Red but got Saffron.', status: 'completed', photoUrl: '', createdAt: new Date(Date.now() - 604800000).toISOString() },
+        { id: '1', orderId: 'ORD-1088', productName: 'Brahminical 9-Yard Kumbakonam Madisar Saree', requestType: 'exchange', reason: 'Zari weaving shade mismatch on borders.', status: 'in-transit', photoUrl: '', createdAt: new Date(Date.now() - 86400000).toISOString() },
+        { id: '2', orderId: 'ORD-2022', productName: 'Sacred White Brahmin Panchakacham Cotton Veshti', requestType: 'return', reason: 'Small weaving thread pull on the gold border.', status: 'approved', photoUrl: '', createdAt: new Date(Date.now() - 172800000).toISOString() },
+        { id: '3', orderId: 'ORD-3051', productName: 'Premium Pure Silk Priest Angavastram', requestType: 'exchange', reason: 'Requested custom Sandalwood shade but received Ivory.', status: 'completed', photoUrl: '', createdAt: new Date(Date.now() - 604800000).toISOString() },
+        { id: '4', orderId: 'ORD-4012', productName: 'Brahminical Grahapravesam Silk Madisar Saree', requestType: 'return', reason: 'Order delayed by two days, missed the auspicious grihapravesam muhurtham.', status: 'pending', photoUrl: '', createdAt: new Date(Date.now() - 43200000).toISOString() },
+        { id: '5', orderId: 'ORD-5521', productName: 'Lord Venkateswara Swamy Peethambaram Vastram', requestType: 'exchange', reason: 'The gold tissue border is narrower than the temple statue standard measurement.', status: 'inspecting', photoUrl: '', createdAt: new Date(Date.now() - 259200000).toISOString() },
+        { id: '6', orderId: 'ORD-6678', productName: 'Traditional Vedic Gurukul Cotton Veshti Set', requestType: 'return', reason: 'Accidentally ordered double pack instead of single.', status: 'rejected', photoUrl: '', createdAt: new Date(Date.now() - 864000000).toISOString() },
+        { id: '7', orderId: 'ORD-7701', productName: 'Goddess Mahalakshmi Idol Traditional Silk Saree', requestType: 'exchange', reason: 'Requesting a different goddess crown motif style.', status: 'pending', photoUrl: '', createdAt: new Date().toISOString() },
+        { id: '8', orderId: 'ORD-8812', productName: 'Temple Utsavar Deity Silk Pavadai Set', requestType: 'return', reason: 'Temple committee decided on a different festival color theme.', status: 'approved', photoUrl: '', createdAt: new Date(Date.now() - 345600000).toISOString() },
       ]);
     }
   }

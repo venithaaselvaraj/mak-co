@@ -26,11 +26,21 @@ export default function OrdersPage() {
         ? query(collection(db, 'orders'), orderBy('createdAt', 'desc'))
         : query(collection(db, 'orders'), where('userId', '==', currentUser?.uid), orderBy('createdAt', 'desc'));
       const snap = await getDocs(q);
-      setOrders(snap.docs.map(d => ({ id: d.id, ...d.data() })));
+      const docs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      if (docs.length === 0) {
+        throw new Error('Empty database');
+      }
+      setOrders(docs);
     } catch {
       setOrders([
-        { id: '1', orderId: 'SACRED-9912', buyerName: 'Srinivasan Iyer', productName: 'Pure Silk Vasti', quantity: 1, items: [{name: 'Pure Silk Vasti', quantity: 1, price: 2400}], status: 'preparing', totalAmount: 2400, createdAt: new Date().toISOString(), isWhatsApp: false },
-        { id: '2', orderId: 'ORD-8821', buyerName: 'Meenakshi Ammal', productName: 'Kanchipuram Saree', quantity: 1, items: [{name: 'Kanchipuram Saree', quantity: 1, price: 15500}], status: 'delivered', totalAmount: 15500, createdAt: new Date(Date.now() - 86400000).toISOString(), isWhatsApp: true },
+        { id: '1', orderId: 'SACRED-9912', buyerName: 'Srinivasan Iyer', productName: 'Brahmin Panchakacham Veshti Set', quantity: 1, items: [{name: 'Sacred Brahmin Panchakacham Veshti Set', quantity: 1, price: 1800}], status: 'preparing', totalAmount: 1800, createdAt: new Date().toISOString(), isWhatsApp: false, paymentMethod: 'GPay', screenshotUrl: 'https://images.unsplash.com/photo-1545128485-c400e7702796?auto=format&fit=crop&q=60&w=100' },
+        { id: '2', orderId: 'ORD-8821', buyerName: 'Meenakshi Ammal', productName: 'Brahminical 9-Yard Kumbakonam Madisar Saree', quantity: 1, items: [{name: 'Brahminical 9-Yard Kumbakonam Madisar Saree', quantity: 1, price: 18500}], status: 'delivered', totalAmount: 18500, createdAt: new Date(Date.now() - 86400000).toISOString(), isWhatsApp: true, paymentMethod: 'WhatsApp Pay' },
+        { id: '3', orderId: 'SACRED-7734', buyerName: 'Ranganathan Swami', productName: 'Brahminical Grahapravesam Silk Madisar Saree', quantity: 1, items: [{name: 'Brahminical Grahapravesam Silk Madisar Saree', quantity: 1, price: 19800}], status: 'accepted', totalAmount: 19800, createdAt: new Date(Date.now() - 172800000).toISOString(), isWhatsApp: false, paymentMethod: 'Bank Transfer' },
+        { id: '4', orderId: 'ORD-5542', buyerName: 'Lakshmi Narayanan', productName: 'Vedic Gurukul Cotton Veshti Set', quantity: 2, items: [{name: 'Vedic Gurukul Cotton Veshti Set', quantity: 2, price: 1200}], status: 'shipped', totalAmount: 2400, createdAt: new Date(Date.now() - 259200000).toISOString(), isWhatsApp: true, paymentMethod: 'WhatsApp Pay' },
+        { id: '5', orderId: 'SACRED-4421', buyerName: 'Venkat Raman', productName: 'Lord Venkateswara Swamy Peethambaram Vastram', quantity: 5, items: [{name: 'Lord Venkateswara Swamy Peethambaram Vastram', quantity: 5, price: 24500}], status: 'preparing', totalAmount: 122500, createdAt: new Date(Date.now() - 345600000).toISOString(), isWhatsApp: false, paymentMethod: 'GPay', screenshotUrl: 'https://images.unsplash.com/photo-1626125345510-4603468eedfb?auto=format&fit=crop&q=60&w=100' },
+        { id: '6', orderId: 'ORD-3310', buyerName: 'Gayatri Devi', productName: 'Goddess Mahalakshmi Idol Traditional Silk Saree', quantity: 1, items: [{name: 'Goddess Mahalakshmi Idol Traditional Silk Saree', quantity: 1, price: 22000}], status: 'delivered', totalAmount: 22000, createdAt: new Date(Date.now() - 604800000).toISOString(), isWhatsApp: true, paymentMethod: 'Cash on Ritual' },
+        { id: '7', orderId: 'SACRED-2201', buyerName: 'Anand Kumar (UK)', productName: 'Temple Utsavar Deity Silk Pavadai Vastram Set', quantity: 1, items: [{name: 'Temple Utsavar Deity Silk Pavadai Vastram Set', quantity: 1, price: 15500}], status: 'preparing', totalAmount: 15500, createdAt: new Date().toISOString(), isWhatsApp: false, paymentMethod: 'Swift Transfer', screenshotUrl: '' },
+        { id: '8', orderId: 'ORD-1199', buyerName: 'Temple Committee', productName: 'Swamy Deity Brass Alankaram Shringa Vasti', quantity: 10, items: [{name: 'Swamy Deity Brass Alankaram Shringa Vasti', quantity: 10, price: 16500}], status: 'accepted', totalAmount: 165000, createdAt: new Date(Date.now() - 432000000).toISOString(), isWhatsApp: true, paymentMethod: 'Cheque' },
       ]);
     }
   }

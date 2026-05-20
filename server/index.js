@@ -21,7 +21,28 @@ app.use(express.json());
 // MongoDB Atlas Connection
 const MONGO_URI = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/mkv_sacred_db';
 mongoose.connect(MONGO_URI)
-  .then(() => console.log('✅ Connected to MongoDB Atlas Sacred Vault'))
+  .then(async () => {
+    console.log('✅ Connected to MongoDB Atlas Sacred Vault');
+    
+    // Auto-seed default admin user if database is fresh
+    try {
+      const User = mongoose.model('User');
+      const adminExists = await User.findOne({ email: 'admin@mak.co' });
+      if (!adminExists) {
+        const adminUser = new User({
+          name: 'MAK Sacred Administrator',
+          email: 'admin@mak.co',
+          password: 'password123',
+          phone: '+917598137660',
+          role: 'admin'
+        });
+        await adminUser.save();
+        console.log('🌟 Seeded Default Admin User: admin@mak.co');
+      }
+    } catch (seedErr) {
+      console.error('⚠️ Admin Seeding Skipped:', seedErr.message);
+    }
+  })
   .catch(err => console.error('❌ MongoDB Connection Error:', err));
 
 // Routes

@@ -3,8 +3,8 @@ import axios from 'axios';
 
 const AuthContext = createContext();
 
-// Using local Node server for MongoDB Atlas interactions
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api/auth';
+// Using the Vite local proxy for MongoDB Atlas interactions
+const API_URL = import.meta.env.VITE_API_URL || '/api/auth';
 
 export function useAuth() {
   return useContext(AuthContext);

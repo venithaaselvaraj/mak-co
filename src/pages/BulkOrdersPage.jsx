@@ -21,27 +21,23 @@ export default function BulkOrdersPage() {
       const snap = await getDocs(query(collection(db, 'bulkOrders'), orderBy('createdAt', 'desc')));
       const docs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
       
-      if (docs.length === 0 && isMock) {
-        setBulkOrders([
-          { id: '1', productName: 'Polyester Fabric', requiredQuantity: 500, deliveryLocation: 'Chennai Warehouse', requiredDate: '2025-04-15', status: 'pending', advancePaid: false, notes: 'Urgent requirement for event', createdAt: '2025-03-20' },
-          { id: '2', productName: 'Silk Thread Collection', requiredQuantity: 1000, deliveryLocation: 'Coimbatore Factory', requiredDate: '2025-04-20', status: 'confirmed', advancePaid: true, notes: 'Wedding season stock', createdAt: '2025-03-18' },
-          { id: '3', productName: 'Cotton Saree Bundle', requiredQuantity: 200, deliveryLocation: 'Madurai Showroom', requiredDate: '2025-04-10', status: 'processing', advancePaid: true, notes: '', createdAt: '2025-03-15' },
-          { id: '4', productName: 'Temple Dhoti Bundle (100pc)', requiredQuantity: 100, deliveryLocation: 'Tirumala Devasthanam', requiredDate: '2025-04-05', status: 'pending', advancePaid: false, notes: 'Sacred white with small gold border.', createdAt: '2025-03-25' },
-          { id: '5', productName: 'Priestly Angavastram (Bulk)', requiredQuantity: 300, deliveryLocation: 'Kashi Vishwanath Temple', requiredDate: '2025-04-12', status: 'confirmed', advancePaid: true, notes: 'Standard 2.5m length, pure cotton.', createdAt: '2025-03-22' },
-          { id: '6', productName: 'Wedding Madisar Silk Saree (Bulk)', requiredQuantity: 50, deliveryLocation: 'Chennai Wedding Hall', requiredDate: '2025-05-01', status: 'pending', advancePaid: false, notes: 'Uniform color code: Maroon/Gold', createdAt: '2025-03-24' },
-        ]);
-      } else {
-        setBulkOrders(docs);
+      if (docs.length === 0) {
+        throw new Error('Empty database');
       }
+      setBulkOrders(docs);
     } catch {
       // Robust Fallback: Show all bulk samples even if system errors occur
       setBulkOrders([
-        { id: '1', productName: 'Polyester Fabric', requiredQuantity: 500, deliveryLocation: 'Chennai Warehouse', requiredDate: '2025-04-15', status: 'pending', advancePaid: false, notes: 'Urgent requirement for event', createdAt: '2025-03-20' },
+        { id: '1', productName: 'Pure Silk Fabric (Bulk Rolls)', requiredQuantity: 500, deliveryLocation: 'Heritage Weaving Center, Coimbatore', requiredDate: '2025-04-15', status: 'pending', advancePaid: false, notes: 'Require pure mulberry silk with gold zari borders.', createdAt: '2025-03-20' },
         { id: '2', productName: 'Silk Thread Collection', requiredQuantity: 1000, deliveryLocation: 'Coimbatore Factory', requiredDate: '2025-04-20', status: 'confirmed', advancePaid: true, notes: 'Wedding season stock', createdAt: '2025-03-18' },
         { id: '3', productName: 'Cotton Saree Bundle', requiredQuantity: 200, deliveryLocation: 'Madurai Showroom', requiredDate: '2025-04-10', status: 'processing', advancePaid: true, notes: '', createdAt: '2025-03-15' },
         { id: '4', productName: 'Temple Dhoti Bundle (100pc)', requiredQuantity: 100, deliveryLocation: 'Tirumala Devasthanam', requiredDate: '2025-04-05', status: 'pending', advancePaid: false, notes: 'Sacred white with small gold border.', createdAt: '2025-03-25' },
         { id: '5', productName: 'Priestly Angavastram (Bulk)', requiredQuantity: 300, deliveryLocation: 'Kashi Vishwanath Temple', requiredDate: '2025-04-12', status: 'confirmed', advancePaid: true, notes: 'Standard 2.5m length, pure cotton.', createdAt: '2025-03-22' },
         { id: '6', productName: 'Wedding Madisar Silk Saree (Bulk)', requiredQuantity: 50, deliveryLocation: 'Chennai Wedding Hall', requiredDate: '2025-05-01', status: 'pending', advancePaid: false, notes: 'Uniform color code: Maroon/Gold', createdAt: '2025-03-24' },
+        { id: '7', productName: 'Vedic Pancha Katcham Set', requiredQuantity: 150, deliveryLocation: 'Kumbakonam Pathshala', requiredDate: '2025-04-30', status: 'pending', advancePaid: false, notes: 'For students, durable handloom cotton.', createdAt: '2025-03-26' },
+        { id: '8', productName: 'Festival Silk Banners', requiredQuantity: 25, deliveryLocation: 'Tanjore Big Temple', requiredDate: '2025-04-25', status: 'confirmed', advancePaid: true, notes: 'Custom embroidery required.', createdAt: '2025-03-21' },
+        { id: '9', productName: 'Ritual Curtains (Cotton)', requiredQuantity: 40, deliveryLocation: 'Udupi Krishna Temple', requiredDate: '2025-05-15', status: 'pending', advancePaid: false, notes: 'Sandalwood color with temple motifs.', createdAt: '2025-03-27' },
+        { id: '10', productName: 'Bulk Angavastram gift set', requiredQuantity: 500, deliveryLocation: 'Corporate Event, Bangalore', requiredDate: '2025-06-10', status: 'pending', advancePaid: false, notes: 'Custom box packaging with M A K logo.', createdAt: '2025-03-28' },
       ]);
     }
   }

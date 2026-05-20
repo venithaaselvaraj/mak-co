@@ -102,23 +102,38 @@ const AddProduct = () => {
                     animate={{ opacity: 1, y: 0 }}
                     className="bg-white/80 backdrop-blur-xl rounded-2xl p-8 border border-[#800000]/10 shadow-[0_20px_50px_rgba(128,0,0,0.1)]"
                 >
-                    <div className="flex items-center justify-between mb-8 pb-6 border-b border-[#D4AF37]/20">
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <h1 className="text-3xl font-bold text-[#800000] font-['Cinzel']">{t('admin', 'title')}</h1>
-                                <div className="h-1 w-20 bg-[#D4AF37] mt-2 rounded-full" />
-                            </div>
-                            <button type="button" onClick={() => {
-                                setFormData({
-                                    name: 'Kanchipuram Pattu Saree',
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 pb-6 border-b border-[#D4AF37]/20">
+                        <div>
+                            <h1 className="text-3xl font-bold text-[#800000] font-['Cinzel']">{t('admin', 'title')}</h1>
+                            <div className="h-1 w-20 bg-[#D4AF37] mt-2 rounded-full" />
+                        </div>
+                        <button type="button" onClick={() => {
+                            const samples = [
+                                {
+                                    name: 'Brahminical 9-Yard Kumbakonam Madisar Saree',
                                     price: '18500',
                                     category: 'Women',
-                                    description: 'A masterpiece from Kanchipuram, featuring pure mulberry silk and authentic zari, sanctified with the temple-red hue of tradition.'
-                                });
-                            }} className="text-[10px] uppercase tracking-widest font-bold px-4 py-2 bg-[#800000]/10 text-[#800000] rounded-full hover:bg-[#800000] hover:text-[#FDFBF7] transition-all border border-[#800000]/20">
-                                Fill Sample Data
-                            </button>
-                        </div>
+                                    description: 'A masterpiece 9-yard Madisar drape from Kumbakonam, featuring pure mulberry silk and authentic gold zari border, tailored for traditional Brahmin rituals.'
+                                },
+                                {
+                                    name: 'Sacred White Brahmin Panchakacham Veshti Set',
+                                    price: '1800',
+                                    category: 'Men',
+                                    description: 'Fine white cotton Panchakacham Veshti with an exquisite gold zari border, worn traditionally by priests and archakas for temple daily puja.'
+                                },
+                                {
+                                    name: 'Lord Venkateswara Swamy Peethambaram Vastram',
+                                    price: '24500',
+                                    category: 'Men',
+                                    description: 'Heavy-weight divine Peethambaram gold-threaded silk vastram, designed specifically for draping Swamy statue temple deities.'
+                                }
+                            ];
+                            const nextIdx = (window._addProductIdx || 0) % samples.length;
+                            setFormData(samples[nextIdx]);
+                            window._addProductIdx = (window._addProductIdx || 0) + 1;
+                        }} className="text-[10px] uppercase tracking-widest font-bold px-5 py-2.5 bg-[#800000]/10 text-[#800000] rounded-full hover:bg-[#800000] hover:text-[#FDFBF7] transition-all border border-[#800000]/20 self-start sm:self-center">
+                            Fill Sample Data
+                        </button>
                     </div>
 
                     <form onSubmit={handlePublish} className="space-y-8">

@@ -59,6 +59,11 @@ export default function DashboardPage() {
         const productSnap = await getDocs(collection(db, 'products'));
         const orderSnap = await getDocs(collection(db, 'orders'));
         const bulkSnap = await getDocs(collection(db, 'bulkOrders'));
+        
+        if (productSnap.size === 0 && orderSnap.size === 0 && bulkSnap.size === 0) {
+          throw new Error('Empty database');
+        }
+        
         let lowStock = 0;
         productSnap.forEach(doc => {
           if (doc.data().stockQuantity < 10) lowStock++;
@@ -195,10 +200,13 @@ export default function DashboardPage() {
         <h3 className="text-[10px] uppercase tracking-[0.3em] font-bold text-amber-500 mb-6">Heritage Log</h3>
         <div className="space-y-4">
           {[
-            { text: 'Sacred order received from Priya - Silk Saree × 2', time: '2 hours ago', iconColor: 'bg-[#800000]' },
-            { text: 'Textile alert: Cotton thread price increased by 5%', time: '4 hours ago', iconColor: 'bg-amber-600' },
-            { text: 'Temple bulk order confirmed - 50pc Angavastram', time: '1 day ago', iconColor: 'bg-amber-900' },
-            { text: 'Ritual return request approved - Order #1234', time: '2 days ago', iconColor: 'bg-rose-900' },
+            { text: 'Sacred order received from Srinivasan - Silk Vasti × 1', time: '1 hour ago', iconColor: 'bg-[#800000]' },
+            { text: 'New bulk inquiry: 200pc Cotton Saree Bundle', time: '3 hours ago', iconColor: 'bg-amber-700' },
+            { text: 'Textile alert: Silk price stabilized at Kanchi Heritage', time: '5 hours ago', iconColor: 'bg-emerald-600' },
+            { text: 'Temple bulk order confirmed - 100pc Dhoti Set', time: '1 day ago', iconColor: 'bg-amber-900' },
+            { text: 'Ritual return request approved - Order #SACRED-9912', time: '2 days ago', iconColor: 'bg-rose-900' },
+            { text: 'Inventory low: Traditional Madisar (Red) - 2 units left', time: '2 days ago', iconColor: 'bg-amber-500' },
+            { text: 'Successful WhatsApp Pay received - Meenakshi Ammal', time: '3 days ago', iconColor: 'bg-emerald-500' },
           ].map((item, i) => (
             <div key={i} className="flex items-center gap-4 p-4 bg-white/5 rounded-2xl border border-white/5 hover:border-amber-900/20 transition-all">
               <div className={`w-3 h-3 rounded-full ${item.iconColor} shadow-lg shadow-black/20`}></div>

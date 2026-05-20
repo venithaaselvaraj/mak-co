@@ -23,21 +23,10 @@ export default function BillUploadPage() {
       const snap = await getDocs(query(collection(db, 'bills'), orderBy('purchaseDate', 'desc')));
       const docs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
       
-      if (docs.length === 0 && isMock) {
-        setBills([
-          { id: '1', manufacturerName: 'Kanchi Heritage Silks', productName: 'Pure Gold Zari Silk Saree', purchasePrice: 45000, purchaseDate: '2025-03-25', fileUrl: '', fileName: 'kanchi_invoice_102.pdf' },
-          { id: '2', manufacturerName: 'Varanasi Weavers Guild', productName: 'Banarasi Brocade Fabric', purchasePrice: 28000, purchaseDate: '2025-03-22', fileUrl: '', fileName: 'banarasi_bill_99.jpg' },
-          { id: '3', manufacturerName: 'Coimbatore Handlooms', productName: 'Vedic Pure Cotton Vasti', purchasePrice: 15000, purchaseDate: '2025-03-20', fileUrl: '', fileName: 'cotton_invoice_v2.pdf' },
-          { id: '4', manufacturerName: 'Linen Masterworks', productName: 'Traditional Linen Angavastram', purchasePrice: 12000, purchaseDate: '2025-03-18', fileUrl: '', fileName: 'linen_receipt_04.pdf' },
-          { id: '5', manufacturerName: 'Mysore Silk Emporium', productName: 'Mysore Crepe Silk Saree', purchasePrice: 32000, purchaseDate: '2025-03-15', fileUrl: '', fileName: 'mysore_bill.pdf' },
-          { id: '6', manufacturerName: 'Madurai Weaving Society', productName: 'Sungudi Cotton Collection', purchasePrice: 8500, purchaseDate: '2025-03-10', fileUrl: '', fileName: 'madurai_bill.jpg' },
-          { id: '7', manufacturerName: 'Temple Madisar Weavers', productName: '9-Yards Traditional Silk Madisar', purchasePrice: 18500, purchaseDate: '2025-03-08', fileUrl: '', fileName: 'madisar_inv.pdf' },
-          { id: '8', manufacturerName: 'Surat Chiffon Co', productName: 'Pure Georgette Fabric Roll', purchasePrice: 42000, purchaseDate: '2025-03-05', fileUrl: '', fileName: 'surat_georgette.pdf' },
-          { id: '9', manufacturerName: 'Rajasthan Bandhani Hub', productName: 'Tie & Dye Bandhani Dupattas', purchasePrice: 12500, purchaseDate: '2025-03-02', fileUrl: '', fileName: 'rajasthan_bill.jpg' },
-        ]);
-      } else {
-        setBills(docs);
+      if (docs.length === 0) {
+        throw new Error('Empty database');
       }
+      setBills(docs);
     } catch {
       // Robust Fallback: Show all heritage samples even if system errors occur
       setBills([
@@ -50,6 +39,7 @@ export default function BillUploadPage() {
         { id: '7', manufacturerName: 'Temple Madisar Weavers', productName: '9-Yards Traditional Silk Madisar', purchasePrice: 18500, purchaseDate: '2025-03-08', fileUrl: '', fileName: 'madisar_inv.pdf' },
         { id: '8', manufacturerName: 'Surat Chiffon Co', productName: 'Pure Georgette Fabric Roll', purchasePrice: 42000, purchaseDate: '2025-03-05', fileUrl: '', fileName: 'surat_georgette.pdf' },
         { id: '9', manufacturerName: 'Rajasthan Bandhani Hub', productName: 'Tie & Dye Bandhani Dupattas', purchasePrice: 12500, purchaseDate: '2025-03-02', fileUrl: '', fileName: 'rajasthan_bill.jpg' },
+        { id: '10', manufacturerName: 'Salem Textile Guild', productName: 'Premium Cotton Dhoti Set', purchasePrice: 9200, purchaseDate: '2025-02-28', fileUrl: '', fileName: 'salem_invoice.pdf' },
       ]);
     }
   }
@@ -122,7 +112,9 @@ export default function BillUploadPage() {
               const samples = [
                 { manufacturerName: 'Kanchi Silks Heritage', productName: 'Pure Gold Zari Silk Saree', purchasePrice: '125000', notes: 'Bulk stock for Veda Collection (Auspicious Red)' },
                 { manufacturerName: 'Temple Madisar Weavers', productName: '9-Yards Silk Madisar', purchasePrice: '18500', notes: 'Traditional bridal collection.' },
-                { manufacturerName: 'Surat Chiffon Co', productName: 'Pure Georgette Fabric Roll', purchasePrice: '42000', notes: 'Lightweight ritual fabric.' }
+                { manufacturerName: 'Surat Chiffon Co', productName: 'Pure Georgette Fabric Roll', purchasePrice: '42000', notes: 'Lightweight ritual fabric.' },
+                { manufacturerName: 'Salem Textile Guild', productName: 'Cotton Dhoti Set (10pc)', purchasePrice: '8500', notes: 'Monthly temple supplies.' },
+                { manufacturerName: 'Banarasi Hub Weavers', productName: 'Brocade Dupatta Set', purchasePrice: '15000', notes: 'Festive season stock.' }
               ];
               const nextIdx = (window._billIdx || 0) % samples.length;
               setForm({
