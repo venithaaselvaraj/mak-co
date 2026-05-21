@@ -51,51 +51,46 @@ export default function UserDashboardPage() {
         async function fetchProducts() {
             setLoading(true);
             try {
-                if (import.meta.env.VITE_FIREBASE_API_KEY === 'AIzaSyDemoKeyReplaceMeWithReal') {
-                    const DATA_VERSION = 'v2_saree_dhoti';
-                    const savedVersion = localStorage.getItem('mock_products_version');
-                    // Clear stale data from old sessions
-                    if (savedVersion !== DATA_VERSION) {
-                        localStorage.removeItem('mock_products');
-                        localStorage.setItem('mock_products_version', DATA_VERSION);
-                    }
-                    const saved = localStorage.getItem('mock_products');
-                    if (saved) {
-                        setProducts(JSON.parse(saved));
-                        setLoading(false);
-                        return;
-                    }
-                    throw new Error("Mock Mode enabled, skipping Firebase fetch");
-                }
-                // Limit to 24 for instant ritual reveal
-                const q = query(collection(db, 'products'), orderBy('createdAt', 'desc'), limit(24));
-                const snap = await getDocs(q);
-                // Check if collection has data
-                if (snap.empty) {
-                  throw new Error("No products found in Firestore");
-                }
-                const data = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                setProducts(data);
+                const mockProducts = [
+                    // WOMEN (10 Items)
+                    { id: 'W1', name: 'Brahminical 9-Yard Kumbakonam Madisar Saree', price: 18500, category: 'Women', imageUrl: '/assets/products/brahmin_saree.png', description: 'Traditional Brahmin 9-yard Madisar drape with rich gold zari temple borders.' },
+                    { id: 'W2', name: 'Goddess Mahalakshmi Idol Traditional Silk Saree', price: 22000, category: 'Women', imageUrl: '/assets/landing/temple_statue.png', description: 'Splendid traditional silk saree designed for the sacred decoration and draping.' },
+                    { id: 'W3', name: 'Brahminical Grahapravesam Silk Madisar Saree', price: 19800, category: 'Women', imageUrl: '/assets/products/madisar.png', description: '9-yard pure mulberry silk saree worn traditionally for Brahmin weddings.' },
+                    { id: 'W4', name: 'Handwoven Kanchipuram Silk Saree (Peacock Motif)', price: 28000, category: 'Women', imageUrl: '/assets/products/kanchipuram.png', description: 'Exquisite Kanchipuram silk saree featuring traditional peacock motifs.' },
+                    { id: 'W5', name: 'Traditional Koorai Saree for Muhurtham', price: 32500, category: 'Women', imageUrl: '/assets/products/banarasi.png', description: 'The essential red and gold Koorai saree for the sacred Muhurtham ceremony.' },
+                    { id: 'W6', name: 'Pure Gold-Zari Pavadai Sattai (Girls)', price: 9500, category: 'Women', imageUrl: '/assets/products/temple_silk.png', description: 'Traditional silk pavadai sattai for young girls, perfect for temple visits.' },
+                    { id: 'W7', name: 'Kanchi Tissue Silk Saree (Bridal)', price: 45000, category: 'Women', imageUrl: '/assets/landing/hero_kanchipuram_silk_1774528784605.png', description: 'Heavy Kanchi tissue silk saree with intricate zari work for the grand bridal entry.' },
+                    { id: 'W8', name: 'Vedic Ceremonial Saree (Pink & Gold)', price: 21000, category: 'Women', imageUrl: '/assets/landing/banarasi_sacred_weave_1774528915946.png', description: 'Beautiful pink and gold silk saree, perfect for Sumangali Prarthanai.' },
+                    { id: 'W9', name: 'Pure Cotton Temple Saree (Maroon)', price: 4200, category: 'Women', imageUrl: '/assets/landing/products_page_temple_heritage_1774461497113.png', description: 'Comfortable pure cotton saree with traditional maroon borders for daily wear.' },
+                    { id: 'W10', name: 'Grand Silk Half-Saree (Langa Voni)', price: 16500, category: 'Women', imageUrl: '/assets/products/brahmin_saree.png', description: 'Traditional South Indian half-saree set with rich embellishments for young women.' },
+                    
+                    // MEN (10 Items)
+                    { id: 'M1', name: 'Sacred White Brahmin Panchakacham Veshti', price: 1800, category: 'Men', imageUrl: '/assets/products/mens_panchakacham.png', description: 'Traditional 10-yards white Veshti with fine 5-inch gold zari border.' },
+                    { id: 'M2', name: 'Lord Venkateswara Swamy Peethambaram Vastram', price: 24500, category: 'Men', imageUrl: '/assets/landing/traditional_ghoti_vasti_1774528814547.png', description: 'Magnificent heavy-weight silk drape decorated with intricate motifs.' },
+                    { id: 'M3', name: 'Traditional Vedic Gurukul Cotton Veshti Set', price: 1200, category: 'Men', imageUrl: '/assets/products/vasti.png', description: 'Traditional unbleached single cotton Veshti with narrow maroon borders.' },
+                    { id: 'M4', name: 'Pure Silk Angavastram for Temple Archakas', price: 4500, category: 'Men', imageUrl: '/assets/products/angavastram.png', description: 'A pristine pure silk angavastram for men, woven to complement traditional attire.' },
+                    { id: 'M5', name: 'Vedic Ceremonial Silk Dhoti (Yellow)', price: 7800, category: 'Men', imageUrl: '/assets/products/dhoti_border.png', description: 'Auspicious yellow silk dhoti for auspicious rituals like Upanayanam.' },
+                    { id: 'M6', name: 'Gents Cotton Jubba/Kurta (Unbleached)', price: 1450, category: 'Men', imageUrl: '/assets/products/mens_panchakacham.png', description: 'Comfortable unbleached pure cotton jubba for daily wear and spiritual practices.' },
+                    { id: 'M7', name: 'Pattu Veshti & Sattai Set for Groom', price: 12500, category: 'Men', imageUrl: '/assets/products/vasti.png', description: 'Complete groom set featuring pure silk panchakacham dhoti and matching shirt.' },
+                    { id: 'M8', name: 'Everyday Temple Cotton Dhoti (White)', price: 850, category: 'Men', imageUrl: '/assets/products/dhoti_border.png', description: 'Simple white cotton dhoti for daily prayers and visits to the temple.' },
+                    { id: 'M9', name: 'Ayyappa Swamy Black Vrutham Dhoti', price: 650, category: 'Men', imageUrl: '/assets/landing/traditional_ghoti_vasti_1774528814547.png', description: 'Traditional black dhoti worn during the Sabarimala Makara Jyothi vrutham.' },
+                    { id: 'M10', name: 'Golden Zari Premium Silk Shirt', price: 5600, category: 'Men', imageUrl: '/assets/products/angavastram.png', description: 'Rich silk shirt woven with subtle golden zari threads for grand occasions.' },
+
+                    // ACCESSORIES
+                    { id: 'A1', name: 'Temple Utsavar Deity Silk Pavadai Vastram Set', price: 15500, category: 'Accessories', imageUrl: '/assets/products/temple_silk.png', description: 'Exquisite silk micro-woven pavadai drape tailored for temple deity idol alankaram.' },
+                    { id: 'A2', name: 'Swamy Deity Brass Alankaram Shringa Vasti', price: 16500, category: 'Accessories', imageUrl: '/assets/products/brass_vasti.png', description: 'Fine metallic gold tissue Veshti designed to drape brass temple deity statues.' },
+                    { id: 'A4', name: 'Brass Kamatchi Amman Vilakku (Lamp)', price: 4200, category: 'Accessories', imageUrl: '/assets/landing/temple_ritual.png', description: 'Traditional heavy brass Kamatchi Amman lamp for daily home and temple rituals.' },
+                    { id: 'A5', name: 'Spatika Lingam Abhishekam Set', price: 8500, category: 'Accessories', imageUrl: '/assets/landing/weaver_sanctity_1774528857665.png', description: 'Complete set of pure spatika lingam with a brass peetham for daily abhishekam.' },
+                    { id: 'A6', name: 'Aarathi Thattu with Meenakari Work', price: 2100, category: 'Accessories', imageUrl: '/assets/products/brass_vasti.png', description: 'Beautifully decorated Aarathi plate used during auspicious ceremonies and welcomes.' },
+                    { id: 'A7', name: 'Silver Coated Pooja Kalasham', price: 4800, category: 'Accessories', imageUrl: '/assets/landing/media__1774461178761.png', description: 'Sacred Kalasham used in homams, crafted with a fine silver coating for purity.' },
+                    { id: 'A8', name: 'Traditional Panchaloha Kuthu Vilakku', price: 11000, category: 'Accessories', imageUrl: '/assets/landing/temple_ritual.png', description: 'Five-metal (Panchaloha) grand Kuthu Vilakku, a staple for traditional households.' },
+                    { id: 'A9', name: 'Pure Sandalwood (Chandanam) Block & Stone', price: 1800, category: 'Accessories', imageUrl: '/assets/landing/weaver_sanctity_1774528857665.png', description: 'Authentic sandalwood block with rubbing stone for daily deity alankaram.' },
+                    { id: 'A10', name: 'Traditional Jewel for Brahmin & Temple Statue', price: 24000, category: 'Accessories', imageUrl: '/assets/landing/media__1774516810047.png', description: 'Exquisite traditional jewel set tailored for adorning both Brahmin ceremonies and temple deity statues.' }
+                ];
+                
+                // Set the mock products immediately and skip Firebase
+                setProducts(mockProducts);
                 setError(null);
-            } catch (err) {
-                console.error("Error fetching products:", err);
-                setError("Failed to load products. Using demo collection.");
-                // Fallback to demo data for visual completeness
-                const saved = localStorage.getItem('mock_products');
-                if (saved) {
-                    setProducts(JSON.parse(saved));
-                } else {
-                    setProducts([
-                        { id: '1', name: 'Brahminical 9-Yard Kumbakonam Madisar Saree', price: 18500, category: 'Women', imageUrl: '/assets/products/madisar.png', description: 'Traditional Brahmin 9-yard Madisar drape with rich gold zari temple borders, crafted for sacred ceremonies.' },
-                        { id: '2', name: 'Sacred White Brahmin Panchakacham Veshti Set', price: 1800, category: 'Men', imageUrl: '/assets/products/vasti.png', description: 'Traditional 10-yards white Veshti with fine 5-inch gold zari border, worn by priests and archakas.' },
-                        { id: '3', name: 'Lord Venkateswara Swamy Peethambaram Vastram', price: 24500, category: 'Men', imageUrl: '/assets/landing/hero_kanchipuram_silk_1774528784605.png', description: 'Magnificent heavy-weight silk drape decorated with intricate motifs, customized for temple Swamy statues.' },
-                        { id: '4', name: 'Temple Utsavar Deity Silk Pavadai Vastram Set', price: 15500, category: 'Accessories', imageUrl: '/assets/products/banarasi.png', description: 'Exquisite silk micro-woven pavadai drape tailored for temple deity idol alankaram.' },
-                        { id: '5', name: 'Goddess Mahalakshmi Idol Traditional Silk Saree', price: 22000, category: 'Women', imageUrl: '/assets/products/kanchipuram.png', description: 'Splendid traditional silk saree designed for the sacred decoration and draping of Goddess temple statues.' },
-                        { id: '6', name: 'Traditional Vedic Gurukul Cotton Veshti Set', price: 1200, category: 'Men', imageUrl: '/assets/products/dhoti_border.png', description: 'Traditional unbleached single cotton Veshti with narrow maroon borders, designed for temple daily archana.' },
-                        { id: '7', name: 'Brahminical Grahapravesam Silk Madisar Saree', price: 19800, category: 'Women', imageUrl: '/assets/products/madisar.png', description: '9-yard pure mulberry silk saree worn traditionally for Brahmin weddings and Grihapravesam rituals.' },
-                        { id: '8', name: 'Swamy Deity Brass Alankaram Shringa Vasti', price: 16500, category: 'Accessories', imageUrl: '/assets/landing/traditional_ghoti_vasti_1774528814547.png', description: 'Fine metallic gold tissue Veshti designed to drape brass temple deity statues during festival processions.' },
-                    ]);
-                }
             } finally {
                 setLoading(false);
             }
@@ -395,7 +390,7 @@ export default function UserDashboardPage() {
                             <motion.div layout initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} key={product.id}
                                 className="group bg-white/40 backdrop-blur-md rounded-[2.5rem] overflow-hidden border border-amber-900/10 hover:border-amber-900/30 transition-all duration-700 hover:-translate-y-2 hover:shadow-2xl hover:shadow-amber-900/10">
                                 <div className="aspect-[3/4] overflow-hidden relative">
-                                    <img src={product.imageUrl} alt={product.name} loading="lazy" className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110 opacity-90 group-hover:opacity-100" />
+                                    <img src={product.imageUrl || '/assets/landing/temple_statue.png'} alt={product.name || 'Sacred Item'} loading="lazy" className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110 opacity-90 group-hover:opacity-100" />
                                     <div className="absolute inset-0 bg-gradient-to-t from-[#2D1B10]/90 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-8">
                                         <button onClick={() => setSelectedProduct(product)}
                                             className="w-full bg-[#800000] text-white font-bold py-5 rounded-2xl hover:bg-[#A52A2A] transition-all transform translate-y-4 group-hover:translate-y-0 duration-500 text-[10px] uppercase tracking-[0.3em] flex items-center justify-center gap-2">
@@ -403,11 +398,11 @@ export default function UserDashboardPage() {
                                         </button>
                                     </div>
                                     <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-md text-[#800000] px-4 py-2 rounded-xl text-[10px] font-bold shadow-lg">
-                                        ₹{parseFloat(product.price).toLocaleString()}
+                                        ₹{parseFloat(product.price || 0).toLocaleString()}
                                     </div>
                                 </div>
                                 <div className="p-8">
-                                    <h3 className="text-xl font-serif text-[#2D1B10] mb-2 group-hover:text-[#800000] transition-colors line-clamp-1">{product.name}</h3>
+                                    <h3 className="text-xl font-serif text-[#2D1B10] mb-2 group-hover:text-[#800000] transition-colors line-clamp-1">{product.name || 'Sacred Heritage Item'}</h3>
                                     <p className="text-[10px] text-[#5D4037]/40 tracking-widest uppercase mb-4 font-bold">{product.category}</p>
                                     <div className="flex items-center justify-between">
                                         <div className="flex gap-0.5 text-amber-500">
@@ -440,9 +435,9 @@ export default function UserDashboardPage() {
                 
                 <div className="grid md:grid-cols-3 gap-8">
                     {[
-                        { title: 'The Brahminical Wedding', desc: 'Madisar sarees and pure silk vastis for the most sacred union.', icon: Shield, img: 'https://images.unsplash.com/photo-1594235412411-208b04a9696c?auto=format&fit=crop&q=70&w=600' },
-                        { title: 'Temple Ritual Attire', desc: 'Unbleached hand-spun cotton vastis for daily puja and offerings.', icon: Globe, img: 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&q=70&w=600' },
-                        { title: 'Festival Silk Edit', desc: 'Vibrant Kanchipuram colors prepared for Diwali and Pongal celebrations.', icon: Star, img: 'https://images.unsplash.com/photo-1583391733956-6c78276477e2?auto=format&fit=crop&q=70&w=600' }
+                        { title: 'The Brahminical Wedding', desc: 'Madisar sarees and pure silk vastis for the most sacred union.', icon: Shield, img: '/assets/landing/temple_ritual.png' },
+                        { title: 'Temple Ritual Attire', desc: 'Unbleached hand-spun cotton vastis for daily puja and offerings.', icon: Globe, img: '/assets/products/vasti.png' },
+                        { title: 'Festival Silk Edit', desc: 'Vibrant Kanchipuram colors prepared for Diwali and Pongal celebrations.', icon: Star, img: '/assets/landing/hero_kanchipuram_silk_1774528784605.png' }
                     ].map((coll, i) => (
                         <motion.div key={i} whileHover={{ y: -10 }} className="group relative aspect-[16/10] rounded-[3rem] overflow-hidden shadow-xl border border-amber-900/10 cursor-pointer">
                             <img src={coll.img} alt={coll.title} className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" />
@@ -484,7 +479,7 @@ export default function UserDashboardPage() {
                     </div>
                     <div className="relative">
                         <div className="aspect-square rounded-[4rem] overflow-hidden border border-amber-900/20 shadow-2xl relative z-10">
-                             <img src="https://images.unsplash.com/photo-1594235412411-208b04a9696c?auto=format&fit=crop&q=80&w=800" className="w-full h-full object-cover" alt="The Loom" />
+                             <img src="/assets/landing/temple_statue.png" className="w-full h-full object-cover" alt="The Loom" />
                              <div className="absolute inset-0 bg-[#800000]/10" />
                         </div>
                         <div className="absolute -bottom-10 -right-10 w-64 h-64 bg-[#800000] rounded-full blur-[100px] opacity-20" />

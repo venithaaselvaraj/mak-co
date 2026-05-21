@@ -11,9 +11,9 @@ const navLinks = [
 ];
 
 const categories = [
-  { name: 'Bridal Couture', image: 'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&q=80&w=800', desc: 'Handcrafted lehengas for your special day.' },
-  { name: 'Regal Silk', image: 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&q=80&w=800', desc: 'Pure Kanchipuram and Banaras weaves.' },
-  { name: 'Modern Ethnic', image: 'https://images.unsplash.com/photo-1567401893414-76b7b1e5a7a5?auto=format&fit=crop&q=80&w=800', desc: 'Chic kurtis and sets for daily elegance.' },
+  { name: 'Sacred Ceremonial', image: 'https://images.unsplash.com/photo-1595156740615-54602f90a6f4?auto=format&fit=crop&q=80&w=800', desc: 'Authentic Madisar and Vedic vastis for sacred rituals.' },
+  { name: 'Temple Deity Silk', image: 'https://images.unsplash.com/photo-1588622153200-fb73bf44dbda?auto=format&fit=crop&q=80&w=800', desc: 'Specialized alankaram silks for Swamy idols.' },
+  { name: 'Brahminical Heritage', image: 'https://images.unsplash.com/photo-1601058268499-e52658b8ebf8?auto=format&fit=crop&q=80&w=800', desc: 'Unbleached pure cottons for daily archana.' },
 ];
 
 export default function LandingPage() {
@@ -150,11 +150,12 @@ export default function LandingPage() {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-12 lg:gap-20">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             {[
-              { name: "Traditional Sarees", desc: "Pure Silk & Hand-woven Zari", image: "/assets/landing/banarasi_sacred_weave_1774528915946.png" },
-              { name: "Heritage Vasti (Ghoti Set)", desc: "Pure Cotton & Silk Panchakacham", image: "/assets/landing/traditional_ghoti_vasti_1774528814547.png" },
-              { name: "Temple Silks", desc: "Auspicious Kanchipuram for Rituals", image: "/assets/landing/hero_kanchipuram_silk_1774528784605.png" }
+              { name: 'Sacred Ceremonial', image: '/assets/landing/temple_ritual.png', desc: 'Authentic Madisar and Vedic vastis for sacred rituals.' },
+              { name: 'Temple Deity Silk', image: '/assets/landing/hero_kanchipuram_silk_1774528784605.png', desc: 'Specialized alankaram silks for Swamy idols.' },
+              { name: 'Brahminical Heritage', image: '/assets/products/dhoti_border.png', desc: 'Unbleached pure cottons for daily archana.' },
+              { name: 'Sacred Accessories', image: '/assets/landing/temple_statue.png', desc: 'Temple Alankaram & traditional brass adornments.' }
             ].map((cat, i) => (
               <div key={i} className="group cursor-pointer">
                 <div className="aspect-[3/4] overflow-hidden mb-8 relative border border-amber-900/10 shadow-sm transition-shadow hover:shadow-xl">

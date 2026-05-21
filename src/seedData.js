@@ -30,7 +30,7 @@ async function seedBoutique() {
             status: 'in-transit',
             userId: 'demo_user_123',
             createdAt: new Date(Date.now() - 86400000).toISOString(),
-            photoUrl: 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&q=80&w=800'
+            photoUrl: '/assets/landing/temple_statue.png'
         });
         console.log("✅ One Heritage Restoration Request Logged.");
         
