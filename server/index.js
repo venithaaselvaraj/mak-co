@@ -22,13 +22,27 @@ app.use(cors());
 app.use(express.json());
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-// MongoDB Atlas Connection
+const PORT = parseInt(process.env.PORT) || 5000;
+const server = app.listen(PORT, '0.0.0.0', () => {
+  console.log(`\n🧵 M A K & CO Backend Server is active on port ${PORT}`);
+  console.log(`   Samyak (Chat): http://localhost:${PORT}/api/chat`);
+  console.log(`   Health: http://localhost:${PORT}/api/health\n`);
+});
+
+server.on('error', (err) => {
+  console.error('❌ Server startup error:', err);
+  process.exit(1);
+});
+
+// MongoDB Atlas Connection (Async)
 const MONGO_URI = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/mkv_sacred_db';
-mongoose.connect(MONGO_URI)
+mongoose.connect(MONGO_URI, {
+  serverSelectionTimeoutMS: 5000 // Fail fast if DB is not reachable
+})
   .then(async () => {
     console.log('✅ Connected to MongoDB Atlas Sacred Vault');
     
-    // Auto-seed default admin user if database is fresh
+    // Auto-seed default admin user
     try {
       const User = mongoose.model('User');
       const adminExists = await User.findOne({ email: 'admin@mak.co' });
@@ -47,7 +61,10 @@ mongoose.connect(MONGO_URI)
       console.error('⚠️ Admin Seeding Skipped:', seedErr.message);
     }
   })
-  .catch(err => console.error('❌ MongoDB Connection Error:', err));
+  .catch(err => {
+    console.error('❌ MongoDB Connection Error:', err.message);
+    console.log('💡 Tip: Ensure your MONGO_URI is set in Render Env Vars and 0.0.0.0/0 IP is whitelisted in Atlas.');
+  });
 
 // Routes
 app.use("/api/auth", authRoutes);
@@ -113,17 +130,4 @@ app.get('*', (req, res) => {
     return res.status(404).send('Not Found');
   }
   res.sendFile(path.join(distPath, 'index.html'));
-});
-
-const PORT = parseInt(process.env.PORT) || 5000;
-
-const server = app.listen(PORT, '0.0.0.0', () => {
-  console.log(`\n🧵 M A K & CO Backend Server is active on port ${PORT}`);
-  console.log(`   Samyak (Chat): http://localhost:${PORT}/api/chat`);
-  console.log(`   Health: http://localhost:${PORT}/api/health\n`);
-});
-
-server.on('error', (err) => {
-  console.error('❌ Server startup error:', err);
-  process.exit(1);
 });
