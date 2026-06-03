@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -23,6 +25,10 @@ import ReturnExchangePage from './pages/ReturnExchangePage';
 import ChatbotPage from './pages/ChatbotPage';
 import WhatsAppSettingsPage from './pages/WhatsAppSettingsPage';
 import AdminLoginPage from './pages/AdminLoginPage';
+import ReviewsPage from './pages/ReviewsPage';
+import DrapingGuidePage from './pages/DrapingGuidePage';
+import AIRecommendationPage from './pages/AIRecommendationPage';
+import AddProduct from './pages/Admin/AddProduct';
 
 // Robust Error Boundary
 class AppErrorBoundary extends Component {
@@ -101,11 +107,15 @@ function App() {
               <Route path="/bulk-orders" element={<ProtectedRoute><BulkOrdersPage /></ProtectedRoute>} />
               <Route path="/returns" element={<ProtectedRoute><ReturnExchangePage /></ProtectedRoute>} />
               <Route path="/chatbot" element={<ProtectedRoute><ChatbotPage /></ProtectedRoute>} />
+              <Route path="/reviews" element={<ProtectedRoute><ReviewsPage /></ProtectedRoute>} />
+              <Route path="/draping-guide" element={<ProtectedRoute><DrapingGuidePage /></ProtectedRoute>} />
+              <Route path="/ai-recommendations" element={<ProtectedRoute><AIRecommendationPage /></ProtectedRoute>} />
 
               {/* Admin-Only Routes */}
               <Route path="/bills" element={<ProtectedRoute requiredRole="admin"><BillUploadPage /></ProtectedRoute>} />
               <Route path="/price-comparison" element={<ProtectedRoute requiredRole="admin"><PriceComparisonPage /></ProtectedRoute>} />
               <Route path="/whatsapp-settings" element={<ProtectedRoute requiredRole="admin"><WhatsAppSettingsPage /></ProtectedRoute>} />
+              <Route path="/admin/add-product" element={<ProtectedRoute requiredRole="admin"><AddProduct /></ProtectedRoute>} />
 
               {/* Catch-all */}
               <Route path="*" element={<Navigate to="/" />} />
@@ -114,6 +124,20 @@ function App() {
             {/* Global Floating Chatbot — visible on all user pages */}
             <GlobalChatbot />
           </Router>
+          <ToastContainer
+            position="top-right"
+            autoClose={3000}
+            newestOnTop
+            closeOnClick
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            toastClassName={() =>
+              'relative flex p-0 min-h-10 rounded-2xl justify-between overflow-hidden cursor-pointer mb-3'
+            }
+            bodyClassName={() => 'flex text-sm font-sans p-3 gap-2'}
+            style={{ zIndex: 99999, top: '1.5rem', right: '1.5rem' }}
+          />
         </CartProvider>
       </AuthProvider>
     </AppErrorBoundary>

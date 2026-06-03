@@ -51,7 +51,53 @@ export async function generateResponse(userMessage) {
   return getSmartFallback(userMessage);
 }
 
+export async function getAIRecommendations(params) {
+  const { skinTone, occasion, budget, fabric, color } = params;
+  
+  const prompt = `As Samyak, provide expert traditional attire recommendations for the following user:
+- Skin Tone: ${skinTone}
+- Occasion: ${occasion}
+- Budget: ${budget}
+- Preferred Fabric: ${fabric}
+- Preferred Color: ${color}
+
+Please provide:
+1. Recommended Sarees (at least 2 styles)
+2. Recommended Veshtis (at least 2 styles)
+3. Matching Blouse Suggestions
+4. Matching Accessories
+5. Matching Couple Outfit Suggestions
+6. A detailed "Reason for Recommendation" linking their skin tone, occasion, and budget.
+
+Format your response in structured JSON with the following keys: sarees, veshtis, blouse, accessories, coupleOutfit, reason. Ensure the response is pure JSON.`;
+
+  for (const modelName of MODEL_LIST) {
+    try {
+      const model = genAI.getGenerativeModel({ 
+        model: modelName,
+        generationConfig: { response_mime_type: "application/json" }
+      });
+      const result = await model.generateContent(`${TEXTILE_SYSTEM_PROMPT}\n\n${prompt}`);
+      const response = await result.response;
+      return JSON.parse(response.text());
+    } catch (error) {
+      console.warn(`⚠️ Recommendation Model "${modelName}" failed: ${error.message}`);
+    }
+  }
+
+  // Fallback if AI fails
+  return {
+    sarees: ["Premium Kanchipuram Silk", "Soft Silk Saree"],
+    veshtis: ["Pure White Silk Veshti", "Cotton Dhoti with Gold Border"],
+    blouse: "Matching silk blouse with heavy embroidery",
+    accessories: "Temple jewelry set with gold finish",
+    coupleOutfit: "Matching cream silk shirt and veshti for the partner",
+    reason: `Based on your preference for ${color} and ${fabric}, we recommend these high-sanctity pieces suitable for a ${occasion}.`
+  };
+}
+
 function getSmartFallback(message) {
+
   const msg = message.toLowerCase();
   if (msg.includes('offer') || msg.includes('discount')) {
     return "🎁 **Sacred Offers:**\n\n🧶 **WELCOME10** — 10% OFF your first order\n🛕 **Bulk Tier** — 15% OFF on temple orders (50+ items)\n♻️ **Heritage Exchange** — 20% credit for old silk sarees\n\nContact us via WhatsApp to avail any offer!";

@@ -1,11 +1,18 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
+import { toastCart, toastItemRemoved, toastCartCleared } from '../utils/toast.jsx';
 
 const CartContext = createContext();
 
 export const CartProvider = ({ children }) => {
     const [cart, setCart] = useState(() => {
         const savedCart = localStorage.getItem('cart');
-        return savedCart ? JSON.parse(savedCart) : [];
+        if (!savedCart) return [];
+        try {
+            const parsedCart = JSON.parse(savedCart);
+            return parsedCart.filter(item => !item.id.includes('paired-'));
+        } catch (e) {
+            return [];
+        }
     });
 
     useEffect(() => {
@@ -24,7 +31,7 @@ export const CartProvider = ({ children }) => {
             }
             return [...prevCart, { ...product, quantity: 1 }];
         });
-        alert("Added to cart!"); // Simple feedback
+        toastCart(product.name);
     };
 
     const removeFromCartOne = (productId) => {
@@ -42,11 +49,16 @@ export const CartProvider = ({ children }) => {
     };
 
     const removeFromCart = (productId) => {
-        setCart(prevCart => prevCart.filter(item => item.id !== productId));
+        setCart(prevCart => {
+            const item = prevCart.find(i => i.id === productId);
+            if (item) toastItemRemoved(item.name);
+            return prevCart.filter(i => i.id !== productId);
+        });
     };
 
     const clearCart = () => {
         setCart([]);
+        toastCartCleared();
     };
 
     return (

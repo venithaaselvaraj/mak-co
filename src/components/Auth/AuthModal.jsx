@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { toastSignupSuccess } from '../../utils/toast';
 import { X, User, Lock, ArrowRight, MessageSquare, MapPin } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../../context/LanguageContext';
@@ -55,7 +56,7 @@ const AuthModal = ({ isOpen, onClose, mode = 'signup' }) => {
                 }
 
                 if (internalMode === 'signup') {
-                    alert('Signup Successful! Please Login.');
+                    toastSignupSuccess();
                     setInternalMode('login');
                 } else {
                     console.log("User Logged In", data.user);

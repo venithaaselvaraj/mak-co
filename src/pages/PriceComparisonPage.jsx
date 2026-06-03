@@ -3,6 +3,7 @@ import Layout from '../components/Layout';
 import { db } from '../firebase';
 import { collection, getDocs } from 'firebase/firestore';
 import { FiTrendingDown, FiTrendingUp, FiAward } from 'react-icons/fi';
+import { toastComingSoon } from '../utils/toast';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 
 const COLORS = ['#f59e0b', '#8b5cf6', '#06b6d4', '#ef4444', '#10b981', '#f97316', '#ec4899'];
@@ -182,7 +183,7 @@ export default function PriceComparisonPage() {
                     </div>
                 ))}
             </div>
-            <button className="w-full mt-6 py-3 border border-amber-900/10 rounded-xl text-[9px] font-bold text-amber-500/40 uppercase tracking-[0.3em] hover:bg-white/5 transition-all">
+            <button onClick={() => toastComingSoon('PDF Report download')} className="w-full mt-6 py-3 border border-amber-900/10 rounded-xl text-[9px] font-bold text-amber-500/40 uppercase tracking-[0.3em] hover:bg-white/5 transition-all">
                 Download Analysis Report (PDF)
             </button>
         </div>

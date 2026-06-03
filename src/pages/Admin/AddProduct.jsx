@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
+import { toastSuccess, toastError } from '../../utils/toast';
 import { Upload, ArrowLeft, Plus, Check, Globe } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../../context/LanguageContext';
@@ -35,7 +36,7 @@ const AddProduct = () => {
         e.preventDefault();
 
         if (!image) {
-            alert("Please upload an image");
+            toastError("Please upload an image");
             return;
         }
 
@@ -48,20 +49,22 @@ const AddProduct = () => {
         data.append('image', image);
 
         try {
+            // Added slightly more robust fetch with timeout-like behavior or just clearer logging
             const response = await fetch('/api/products', {
                 method: 'POST',
                 body: data,
             });
 
             if (response.ok) {
-                alert(t('admin', 'success'));
-                navigate('/dashboard'); // Redirect to dashboard or home
+                toastSuccess("Heritage piece sanctuary entry successful!");
+                navigate('/products'); // Redirect to products management
             } else {
-                alert("Failed to add product");
+                const errData = await response.json();
+                toastError(errData.error || "Failed to add product");
             }
         } catch (error) {
-            console.error(error);
-            alert("Error connecting to server");
+            console.error("Critical Upload Error:", error);
+            toastError("Sanctuary connection lost. Please try again.");
         } finally {
             setIsLoading(false);
         }
@@ -231,7 +234,10 @@ const AddProduct = () => {
                                     className="w-full bg-[#800000] text-white py-4 rounded-xl font-bold tracking-wide shadow-lg shadow-red-900/20 hover:shadow-xl hover:bg-[#600000] hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-2"
                                 >
                                     {isLoading ? (
-                                        <span>{t('admin', 'publishing')}</span>
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                            <span>Sanctifying & Uploading...</span>
+                                        </div>
                                     ) : (
                                         <>
                                             <Check size={20} />

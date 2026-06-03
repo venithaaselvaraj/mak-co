@@ -29,23 +29,19 @@ export default function ProductManagement() {
   useEffect(() => { fetchProducts(); }, []);
 
   async function fetchProducts() {
+    setLoading(true);
     try {
-      if (isMock) {
-        const saved = localStorage.getItem('mock_products');
-        if (saved) {
-          setProducts(JSON.parse(saved));
+      const response = await fetch('/api/products');
+      if (response.ok) {
+        const data = await response.json();
+        if (data && data.length > 0) {
+          setProducts(data);
+          setLoading(false);
           return;
         }
-        throw new Error('No saved mock products');
       }
-      const snap = await getDocs(query(collection(db, 'products'), orderBy('createdAt', 'desc')));
-      const docs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-      if (docs.length === 0) {
-        throw new Error('Empty database');
-      }
-      setProducts(docs);
-    } catch {
-      // Heritage Demo Data
+      
+      // Heritage Demo Data Fallback
       const demoData = [
         { id: '1', productName: 'Brahminical 9-Yard Kumbakonam Madisar Saree', fabricType: 'Pure Silk', category: 'Madisar', color: 'Kumkum Maroon & Temple Gold', manufacturerName: 'Kanchi Heritage', price: 18500, stockQuantity: 12, imageUrl: '/assets/products/madisar.png', name: 'Brahminical 9-Yard Kumbakonam Madisar', description: 'Traditional Brahmin 9-yard Madisar drape with rich gold zari temple borders, crafted for sacred ceremonies.' },
         { id: '2', productName: 'Sacred White Brahmin Panchakacham Veshti Set', fabricType: 'Handloom Cotton', category: 'Vasti (Dhoti)', color: 'Bleached White & Gold', manufacturerName: 'Coimbatore Handlooms', price: 1800, stockQuantity: 45, imageUrl: '/assets/products/vasti.png', name: 'Brahmin Panchakacham Veshti Set', description: 'Traditional 10-yards white Veshti with fine 5-inch gold zari border, worn by priests and archakas.' },
@@ -59,7 +55,10 @@ export default function ProductManagement() {
         { id: '10', productName: 'Shiva Lingam Sacred Bilva Archana Veshti', fabricType: 'Pure Cotton', category: 'Deity Attire', color: 'Sacred Haldi Yellow', manufacturerName: 'Madurai Weavers', price: 2500, stockQuantity: 20, imageUrl: '/assets/landing/banarasi_sacred_weave_1774528915946.png', name: 'Shiva Lingam Bilva Archana Vasti', description: 'Vedic yellow cotton vastram with auspicious bilva-leaf motifs, dedicated for Shiva statue decoration.' },
       ];
       setProducts(demoData);
-      if (isMock) localStorage.setItem('mock_products', JSON.stringify(demoData));
+    } catch {
+      console.error("Heritage fetch failed.");
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -208,7 +207,7 @@ export default function ProductManagement() {
           <p className="text-[#FBF6E9]/40 text-[10px] items-center gap-2 uppercase tracking-widest font-bold mt-1">Manage sacred attire inventory</p>
         </div>
         {isAdmin && (
-          <button onClick={openAdd} id="add-product-btn"
+          <button onClick={() => navigate('/admin/add-product')} id="add-product-btn"
             className="flex items-center gap-2 px-6 py-3 bg-[#800000] hover:bg-[#A00000] text-[#FBF6E9] font-medium rounded-xl shadow-lg shadow-black/20 transition-all border border-amber-900/10">
             <FiPlus /> Add New Attire
           </button>

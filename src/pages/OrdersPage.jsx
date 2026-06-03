@@ -33,14 +33,14 @@ export default function OrdersPage() {
       setOrders(docs);
     } catch {
       setOrders([
-        { id: '1', orderId: 'SACRED-9912', buyerName: 'Srinivasan Iyer', productName: 'Brahmin Panchakacham Veshti Set', quantity: 1, items: [{name: 'Sacred Brahmin Panchakacham Veshti Set', quantity: 1, price: 1800}], status: 'preparing', totalAmount: 1800, createdAt: new Date().toISOString(), isWhatsApp: false, paymentMethod: 'GPay', screenshotUrl: '/assets/landing/temple_ritual.png' },
+        { id: '1', orderId: 'SACRED-9912', buyerName: 'Srinivasan Iyer', productName: 'Brahmin Panchakacham Veshti Set', quantity: 1, items: [{name: 'Sacred Brahmin Panchakacham Veshti Set', quantity: 1, price: 1800}], status: 'order_received', totalAmount: 1800, createdAt: new Date().toISOString(), isWhatsApp: false, paymentMethod: 'GPay', screenshotUrl: '/assets/landing/temple_ritual.png' },
         { id: '2', orderId: 'ORD-8821', buyerName: 'Meenakshi Ammal', productName: 'Brahminical 9-Yard Kumbakonam Madisar Saree', quantity: 1, items: [{name: 'Brahminical 9-Yard Kumbakonam Madisar Saree', quantity: 1, price: 18500}], status: 'delivered', totalAmount: 18500, createdAt: new Date(Date.now() - 86400000).toISOString(), isWhatsApp: true, paymentMethod: 'WhatsApp Pay' },
-        { id: '3', orderId: 'SACRED-7734', buyerName: 'Ranganathan Swami', productName: 'Brahminical Grahapravesam Silk Madisar Saree', quantity: 1, items: [{name: 'Brahminical Grahapravesam Silk Madisar Saree', quantity: 1, price: 19800}], status: 'accepted', totalAmount: 19800, createdAt: new Date(Date.now() - 172800000).toISOString(), isWhatsApp: false, paymentMethod: 'Bank Transfer' },
+        { id: '3', orderId: 'SACRED-7734', buyerName: 'Ranganathan Swami', productName: 'Brahminical Grahapravesam Silk Madisar Saree', quantity: 1, items: [{name: 'Brahminical Grahapravesam Silk Madisar Saree', quantity: 1, price: 19800}], status: 'payment_verified', totalAmount: 19800, createdAt: new Date(Date.now() - 172800000).toISOString(), isWhatsApp: false, paymentMethod: 'Bank Transfer' },
         { id: '4', orderId: 'ORD-5542', buyerName: 'Lakshmi Narayanan', productName: 'Vedic Gurukul Cotton Veshti Set', quantity: 2, items: [{name: 'Vedic Gurukul Cotton Veshti Set', quantity: 2, price: 1200}], status: 'shipped', totalAmount: 2400, createdAt: new Date(Date.now() - 259200000).toISOString(), isWhatsApp: true, paymentMethod: 'WhatsApp Pay' },
-        { id: '5', orderId: 'SACRED-4421', buyerName: 'Venkat Raman', productName: 'Lord Venkateswara Swamy Peethambaram Vastram', quantity: 5, items: [{name: 'Lord Venkateswara Swamy Peethambaram Vastram', quantity: 5, price: 24500}], status: 'preparing', totalAmount: 122500, createdAt: new Date(Date.now() - 345600000).toISOString(), isWhatsApp: false, paymentMethod: 'GPay', screenshotUrl: '/assets/landing/temple_statue.png' },
+        { id: '5', orderId: 'SACRED-4421', buyerName: 'Venkat Raman', productName: 'Lord Venkateswara Swamy Peethambaram Vastram', quantity: 5, items: [{name: 'Lord Venkateswara Swamy Peethambaram Vastram', quantity: 5, price: 24500}], status: 'order_received', totalAmount: 122500, createdAt: new Date(Date.now() - 345600000).toISOString(), isWhatsApp: false, paymentMethod: 'GPay', screenshotUrl: '/assets/landing/temple_statue.png' },
         { id: '6', orderId: 'ORD-3310', buyerName: 'Gayatri Devi', productName: 'Goddess Mahalakshmi Idol Traditional Silk Saree', quantity: 1, items: [{name: 'Goddess Mahalakshmi Idol Traditional Silk Saree', quantity: 1, price: 22000}], status: 'delivered', totalAmount: 22000, createdAt: new Date(Date.now() - 604800000).toISOString(), isWhatsApp: true, paymentMethod: 'Cash on Ritual' },
-        { id: '7', orderId: 'SACRED-2201', buyerName: 'Anand Kumar (UK)', productName: 'Temple Utsavar Deity Silk Pavadai Vastram Set', quantity: 1, items: [{name: 'Temple Utsavar Deity Silk Pavadai Vastram Set', quantity: 1, price: 15500}], status: 'preparing', totalAmount: 15500, createdAt: new Date().toISOString(), isWhatsApp: false, paymentMethod: 'Swift Transfer', screenshotUrl: '' },
-        { id: '8', orderId: 'ORD-1199', buyerName: 'Temple Committee', productName: 'Swamy Deity Brass Alankaram Shringa Vasti', quantity: 10, items: [{name: 'Swamy Deity Brass Alankaram Shringa Vasti', quantity: 10, price: 16500}], status: 'accepted', totalAmount: 165000, createdAt: new Date(Date.now() - 432000000).toISOString(), isWhatsApp: true, paymentMethod: 'Cheque' },
+        { id: '7', orderId: 'SACRED-2201', buyerName: 'Anand Kumar (UK)', productName: 'Temple Utsavar Deity Silk Pavadai Vastram Set', quantity: 1, items: [{name: 'Temple Utsavar Deity Silk Pavadai Vastram Set', quantity: 1, price: 15500}], status: 'order_received', totalAmount: 15500, createdAt: new Date().toISOString(), isWhatsApp: false, paymentMethod: 'Swift Transfer', screenshotUrl: '' },
+        { id: '8', orderId: 'ORD-1199', buyerName: 'Temple Committee', productName: 'Swamy Deity Brass Alankaram Shringa Vasti', quantity: 10, items: [{name: 'Swamy Deity Brass Alankaram Shringa Vasti', quantity: 10, price: 16500}], status: 'payment_verified', totalAmount: 165000, createdAt: new Date(Date.now() - 432000000).toISOString(), isWhatsApp: true, paymentMethod: 'Cheque' },
       ]);
     }
   }
@@ -53,7 +53,7 @@ export default function OrdersPage() {
               paymentStatus: 'verified'
           });
           
-          if (newStatus === 'accepted') {
+          if (newStatus === 'payment_verified') {
               // Trigger WhatsApp Confirmation via Server
               const axios = (await import('axios')).default;
               await axios.post('/api/whatsapp/confirm-order', {
@@ -74,11 +74,12 @@ export default function OrdersPage() {
   };
 
   const statusMap = {
-    preparing: { label: 'In Preparation', color: 'text-amber-500', bg: 'bg-amber-500/10' },
-    accepted: { label: 'Auspiciously Accepted', color: 'text-emerald-500', bg: 'bg-emerald-500/10' },
-    shipped: { label: 'Sanctified (Transit)', color: 'text-cyan-400', bg: 'bg-cyan-500/10' },
-    delivered: { label: 'Blessed Delivery', color: 'text-emerald-500', bg: 'bg-emerald-500/10' },
-    canceled: { label: 'Veda Canceled', color: 'text-rose-500', bg: 'bg-rose-500/10' },
+    'Order Received': { label: 'Order Received', color: 'text-amber-500', bg: 'bg-amber-500/10' },
+    order_received: { label: 'Order Received', color: 'text-amber-500', bg: 'bg-amber-500/10' },
+    payment_verified: { label: 'Payment Verified', color: 'text-emerald-500', bg: 'bg-emerald-500/10' },
+    shipped: { label: 'Shipped', color: 'text-cyan-400', bg: 'bg-cyan-500/10' },
+    delivered: { label: 'Delivered', color: 'text-emerald-500', bg: 'bg-emerald-500/10' },
+    canceled: { label: 'Order Canceled', color: 'text-rose-500', bg: 'bg-rose-500/10' },
   };
 
   const filteredOrders = filter === 'all' ? orders : orders.filter(o => o.status === filter);
@@ -91,10 +92,10 @@ export default function OrdersPage() {
       </div>
 
       <div className="flex gap-2 mb-8 overflow-x-auto pb-2 no-scrollbar">
-        {['all', 'preparing', 'shipped', 'delivered'].map(f => (
+        {['all', 'order_received', 'payment_verified', 'shipped', 'delivered'].map(f => (
           <button key={f} onClick={() => setFilter(f)}
             className={`px-6 py-2.5 rounded-xl text-[10px] uppercase tracking-widest font-bold border transition-all ${filter === f ? 'bg-[#800000] border-[#800000] text-white shadow-xl' : 'border-amber-900/10 text-[#FBF6E9]/40 hover:bg-white/5'}`}>
-            {f}
+            {f.replace('_', ' ')}
           </button>
         ))}
       </div>
@@ -151,13 +152,15 @@ export default function OrdersPage() {
                     <div className="pt-6 pb-2 border-t border-amber-900/10 mt-8 overflow-x-auto no-scrollbar">
                       <div className="flex justify-between items-start min-w-[500px] px-2">
                         {[
-                          { s: 'preparing', l: 'Preparing', i: FiBox },
-                          { s: 'accepted', l: 'Sanctified', i: FiCheck },
-                          { s: 'shipped', l: 'In-Transit', i: FiTruck },
+                          { s: 'order_received', l: 'Order Received', i: FiBox },
+                          { s: 'payment_verified', l: 'Payment Verified', i: FiCheck },
+                          { s: 'shipped', l: 'Shipped', i: FiTruck },
                           { s: 'delivered', l: 'Delivered', i: FiPackage },
                         ].map((step, idx, arr) => {
-                          const stages = ['preparing', 'accepted', 'shipped', 'delivered'];
-                          const currentStage = stages.indexOf(order.status);
+                          const stages = ['Order Received', 'order_received', 'payment_verified', 'shipped', 'delivered'];
+                          // Map 'Order Received' from new whatsapp form to 'order_received'
+                          const normalizedStatus = order.status === 'Order Received' ? 'order_received' : order.status;
+                          const currentStage = stages.indexOf(normalizedStatus) === 0 ? 1 : stages.indexOf(normalizedStatus);
                           const stepIdx = stages.indexOf(step.s);
                           const isActive = stepIdx <= currentStage;
                           const isLastCompleted = stepIdx === currentStage;
@@ -195,23 +198,23 @@ export default function OrdersPage() {
               <div className="xl:w-64 flex flex-col gap-3 justify-center border-t xl:border-t-0 xl:border-l border-amber-900/10 pt-6 xl:pt-0 xl:pl-8">
                 {isAdmin ? (
                     <>
-                        {order.status === 'preparing' && (
-                             <button onClick={() => updateStatus(order, 'accepted')} className="w-full py-4 bg-emerald-700 text-white rounded-2xl text-[9px] font-bold uppercase tracking-[0.2em] shadow-lg shadow-emerald-900/20 hover:bg-emerald-800 transition-all flex items-center justify-center gap-2 animate-pulse">
-                                <FiCheck /> Accept Order
+                        {(order.status === 'order_received' || order.status === 'Order Received') && (
+                             <button onClick={() => updateStatus(order, 'payment_verified')} className="w-full py-4 bg-emerald-700 text-white rounded-2xl text-[9px] font-bold uppercase tracking-[0.2em] shadow-lg shadow-emerald-900/20 hover:bg-emerald-800 transition-all flex items-center justify-center gap-2 animate-pulse">
+                                <FiCheck /> Verify Payment
                              </button>
                         )}
-                        {order.status === 'accepted' && (
+                        {order.status === 'payment_verified' && (
                             <button onClick={() => updateStatus(order, 'shipped')} className="w-full py-4 bg-cyan-900/20 text-cyan-400 border border-cyan-900/30 rounded-2xl text-[9px] font-bold uppercase tracking-[0.2em] hover:bg-cyan-900 transition-all flex items-center justify-center gap-2">
-                                <FiTruck /> Sanctify (Ship)
+                                <FiTruck /> Ship Order
                             </button>
                         )}
                         {order.status === 'shipped' && (
                             <button onClick={() => updateStatus(order, 'delivered')} className="w-full py-4 bg-emerald-900/20 text-emerald-400 border border-emerald-900/30 rounded-2xl text-[9px] font-bold uppercase tracking-[0.2em] hover:bg-emerald-900 transition-all flex items-center justify-center gap-2">
-                                <FiCheck /> Confirm Blessing
+                                <FiCheck /> Confirm Delivery
                             </button>
                         )}
                         <button onClick={() => updateStatus(order, 'canceled')} className="w-full py-4 text-rose-500/40 hover:text-rose-500 text-[9px] font-bold uppercase tracking-[0.2em] transition-all">
-                            Dissolve Order
+                            Cancel Order
                         </button>
                     </>
                 ) : (

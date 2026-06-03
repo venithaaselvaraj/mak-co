@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { toastFillDetails, toastOrderPlaced } from '../utils/toast';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, ShoppingBag, Trash2, Minus, Plus, Info } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
@@ -21,7 +22,7 @@ export default function CartPage() {
     const subtotal = cart.reduce((sum, item) => sum + (parseFloat(item.price) * item.quantity), 0);
 
     const handleWhatsAppOrder = async () => {
-        if (!address) return alert("Please provide your delivery address for the sacred inquiry.");
+        if (!address) return toastFillDetails();
         setLoading(true);
 
         const orderId = `SACRED-${Date.now().toString().slice(-6)}`;
@@ -71,6 +72,7 @@ export default function CartPage() {
                 await addDoc(collection(db, 'orders'), orderData);
             }
             
+            toastOrderPlaced();
             // 4. Open WhatsApp in a NEW TAB (Secure)
             window.open(whatsappUrl, '_blank');
             
@@ -79,6 +81,7 @@ export default function CartPage() {
             navigate('/orders');
         } catch (err) {
             console.error("Order archival error:", err);
+            toastOrderPlaced();
             // Even if portal save fails, let the user proceed to WhatsApp
             window.open(whatsappUrl, '_blank');
         } finally {

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { toastComingSoon } from '../utils/toast';
 import { FiArrowRight, FiMenu, FiX, FiInstagram, FiTwitter, FiFacebook, FiShoppingBag, FiUser, FiSearch, FiChevronRight } from 'react-icons/fi';
 import FloatingChatbot from '../components/FloatingChatbot';
 
@@ -19,6 +20,7 @@ const categories = [
 export default function LandingPage() {
   const [scrollY, setScrollY] = useState(0);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleScroll = () => setScrollY(window.scrollY);
@@ -52,7 +54,7 @@ export default function LandingPage() {
 
           {/* Actions */}
           <div className="flex items-center gap-6">
-            <button className="hover:text-[#800000] text-[#5D4037] transition-colors hidden sm:block"><FiSearch size={18} /></button>
+            <button onClick={() => navigate('/dashboard')} className="hover:text-[#800000] text-[#5D4037] transition-colors hidden sm:block"><FiSearch size={18} /></button>
             <Link to="/login" className="hover:text-[#800000] text-[#5D4037] transition-colors flex items-center gap-2 text-[10px] uppercase tracking-widest font-bold">
               <FiUser size={18} /> <span className="hidden lg:inline">Sign In</span>
             </Link>
@@ -123,7 +125,7 @@ export default function LandingPage() {
                 Explore The Veda Edit
                 <FiArrowRight className="group-hover:translate-x-2 transition-transform" />
               </Link>
-              <button className="flex items-center justify-center gap-2 text-[10px] uppercase tracking-[0.3em] font-bold text-[#5D4037] border-b border-amber-900/20 pb-1 hover:text-[#800000] hover:border-[#800000] transition-all">
+              <button onClick={() => navigate('/dashboard')} className="flex items-center justify-center gap-2 text-[10px] uppercase tracking-[0.3em] font-bold text-[#5D4037] border-b border-amber-900/20 pb-1 hover:text-[#800000] hover:border-[#800000] transition-all">
                 The Heritage Story
               </button>
             </div>
@@ -168,7 +170,7 @@ export default function LandingPage() {
                 </div>
                 <h3 className="text-xl font-serif mb-2 text-[#2D1B10] group-hover:text-[#800000] transition-colors">{cat.name}</h3>
                 <p className="text-[10px] text-[#5D4037]/50 tracking-widest uppercase mb-6 font-semibold">{cat.desc}</p>
-                <button className="flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] font-bold text-[#5D4037]/60 border-b border-transparent group-hover:border-[#800000] group-hover:text-[#800000] transition-all pb-0.5">
+                <button onClick={() => navigate('/dashboard')} className="flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] font-bold text-[#5D4037]/60 border-b border-transparent group-hover:border-[#800000] group-hover:text-[#800000] transition-all pb-0.5">
                   View Pieces <FiChevronRight />
                 </button>
               </div>
@@ -219,7 +221,7 @@ export default function LandingPage() {
               </div>
 
               <div className="pt-6">
-                <button className="group flex items-center gap-4 text-[10px] uppercase tracking-[0.4em] font-bold text-[#800000]">
+                <button onClick={() => toastComingSoon('Heritage Article')} className="group flex items-center gap-4 text-[10px] uppercase tracking-[0.4em] font-bold text-[#800000]">
                   Read Our Brahminical Heritage
                   <FiArrowRight className="group-hover:translate-x-2 transition-transform" />
                 </button>

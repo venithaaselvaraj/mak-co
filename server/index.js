@@ -6,6 +6,8 @@ import mongoose from 'mongoose';
 import { fileURLToPath } from 'url';
 import chatRoutes from "./routes/chat.js";
 import authRoutes from "./routes/auth.js";
+import recommendationsRoutes from "./routes/recommendations.js";
+import productsRoutes from "./routes/products.js";
 import { verifyWebhook, handleWebhookMessage, sendOrderNotification, sendOrderConfirmation } from './whatsappService.js';
 
 dotenv.config();
@@ -17,6 +19,7 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // MongoDB Atlas Connection
 const MONGO_URI = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/mkv_sacred_db';
@@ -48,6 +51,8 @@ mongoose.connect(MONGO_URI)
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/chat", chatRoutes);
+app.use("/api/recommendations", recommendationsRoutes);
+app.use("/api/products", productsRoutes);
 
 // WhatsApp Webhook Routes
 app.get('/api/whatsapp/webhook', verifyWebhook);
