@@ -124,7 +124,7 @@ if (!fs.existsSync(distPath)) {
 app.use(express.static(distPath));
 
 // Catch-all to serve index.html for SPA routing
-app.get('/*', (req, res) => {
+app.get('*any', (req, res) => {
   // Don't serve index.html for missing assets or API calls
   if (req.path.startsWith('/api') || req.path.includes('.') || req.path.startsWith('/assets')) {
     return res.status(404).send('Not Found');
