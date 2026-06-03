@@ -94,9 +94,14 @@ app.get('/api/health', (req, res) => {
 });
 
 // Production Static Files
-app.use(express.static(path.join(__dirname, '../dist')));
-app.get(/.*/, (req, res) => {
-  res.sendFile(path.join(__dirname, '../dist', 'index.html'));
+const distPath = path.resolve(__dirname, '../dist');
+console.log(`📡 Serving static files from: ${distPath}`);
+
+app.use(express.static(distPath));
+
+// Catch-all to serve index.html for SPA routing
+app.get('*', (req, res) => {
+  res.sendFile(path.join(distPath, 'index.html'));
 });
 
 const PORT = process.env.PORT || 5000;
