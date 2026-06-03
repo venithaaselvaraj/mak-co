@@ -3,8 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { toastFillDetails, toastOrderPlaced } from '../utils/toast';
 import { ShoppingBag, Search, Filter, LogOut, Globe, X, Check, Star, ShoppingCart, ChevronRight, Info, Shield, Zap, Sparkles, Shirt, Package, Truck } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { db } from '../firebase';
-import { collection, getDocs, query, orderBy, limit, where, addDoc } from 'firebase/firestore';
+import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 
@@ -99,23 +98,10 @@ export default function UserDashboardPage() {
         }
         async function fetchLatestOrder() {
             try {
-                if (import.meta.env.VITE_FIREBASE_API_KEY === 'AIzaSyDemoKeyReplaceMeWithReal') {
-                    // Check local tracking for mock
-                    const mock_orders = [
-                        { id: '1', orderId: 'SACRED-9912', status: 'preparing', productName: 'Pure Silk Vasti', createdAt: new Date().toISOString() }
-                    ];
-                    setLatestOrder(mock_orders[0]);
-                    return;
-                }
-                const q = query(
-                    collection(db, 'orders'), 
-                    where('userId', '==', userData?.uid), 
-                    orderBy('createdAt', 'desc'), 
-                    limit(1)
-                );
-                const snap = await getDocs(q);
-                if (!snap.empty) {
-                    setLatestOrder({ id: snap.docs[0].id, ...snap.docs[0].data() });
+                if (!userData?.uid) return;
+                const response = await axios.get(`/api/orders/latest/${userData.uid}`);
+                if (response.data) {
+                    setLatestOrder(response.data);
                 }
             } catch (err) {
                 console.error("Order fetch error:", err);
@@ -204,10 +190,8 @@ export default function UserDashboardPage() {
 
             const whatsappUrl = `https://wa.me/${proprietorNumber}?text=${encodeURIComponent(text)}`;
 
-            // FIREBASE ARCHIVAL (Non-blocking)
-            if (import.meta.env.VITE_FIREBASE_API_KEY && import.meta.env.VITE_FIREBASE_API_KEY !== 'AIzaSyDemoKeyReplaceMeWithReal') {
-                addDoc(collection(db, 'orders'), orderData).catch(e => console.error("Firestore error:", e));
-            }
+            // MONGODB ARCHIVAL (Non-blocking)
+            axios.post('/api/orders', orderData).catch(e => console.error("MongoDB Order error:", e));
             
             setIsDirectLoading(false);
             toastOrderPlaced();

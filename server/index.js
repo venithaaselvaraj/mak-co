@@ -9,6 +9,8 @@ import chatRoutes from "./routes/chat.js";
 import authRoutes from "./routes/auth.js";
 import recommendationsRoutes from "./routes/recommendations.js";
 import productsRoutes from "./routes/products.js";
+import ordersRoutes from "./routes/orders.js";
+import './models/Order.js';
 import { verifyWebhook, handleWebhookMessage, sendOrderNotification, sendOrderConfirmation } from './whatsappService.js';
 
 dotenv.config();
@@ -71,6 +73,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/chat", chatRoutes);
 app.use("/api/recommendations", recommendationsRoutes);
 app.use("/api/products", productsRoutes);
+app.use("/api/orders", ordersRoutes);
 
 // WhatsApp Webhook Routes
 app.get('/api/whatsapp/webhook', verifyWebhook);

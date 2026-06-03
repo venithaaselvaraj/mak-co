@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Layout from '../components/Layout';
 import { useAuth } from '../context/AuthContext';
-import { db } from '../firebase';
-import { collection, getDocs, updateDoc, doc, query, orderBy, where } from 'firebase/firestore';
+import axios from 'axios';
 import { 
     FiShoppingCart, FiCheck, FiX, FiPackage, 
     FiMessageCircle, FiArrowRight, FiClock,
@@ -20,56 +19,41 @@ export default function OrdersPage() {
   useEffect(() => { fetchOrders(); }, [currentUser, isAdmin, isMock]);
 
   async function fetchOrders() {
+    setLoading(true);
     try {
-      if (isMock) throw new Error('Mock Mode');
-      const q = isAdmin 
-        ? query(collection(db, 'orders'), orderBy('createdAt', 'desc'))
-        : query(collection(db, 'orders'), where('userId', '==', currentUser?.uid), orderBy('createdAt', 'desc'));
-      const snap = await getDocs(q);
-      const docs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-      if (docs.length === 0) {
-        throw new Error('Empty database');
-      }
-      setOrders(docs);
-    } catch {
-      setOrders([
-        { id: '1', orderId: 'SACRED-9912', buyerName: 'Srinivasan Iyer', productName: 'Brahmin Panchakacham Veshti Set', quantity: 1, items: [{name: 'Sacred Brahmin Panchakacham Veshti Set', quantity: 1, price: 1800}], status: 'order_received', totalAmount: 1800, createdAt: new Date().toISOString(), isWhatsApp: false, paymentMethod: 'GPay', screenshotUrl: '/assets/landing/temple_ritual.png' },
-        { id: '2', orderId: 'ORD-8821', buyerName: 'Meenakshi Ammal', productName: 'Brahminical 9-Yard Kumbakonam Madisar Saree', quantity: 1, items: [{name: 'Brahminical 9-Yard Kumbakonam Madisar Saree', quantity: 1, price: 18500}], status: 'delivered', totalAmount: 18500, createdAt: new Date(Date.now() - 86400000).toISOString(), isWhatsApp: true, paymentMethod: 'WhatsApp Pay' },
-        { id: '3', orderId: 'SACRED-7734', buyerName: 'Ranganathan Swami', productName: 'Brahminical Grahapravesam Silk Madisar Saree', quantity: 1, items: [{name: 'Brahminical Grahapravesam Silk Madisar Saree', quantity: 1, price: 19800}], status: 'payment_verified', totalAmount: 19800, createdAt: new Date(Date.now() - 172800000).toISOString(), isWhatsApp: false, paymentMethod: 'Bank Transfer' },
-        { id: '4', orderId: 'ORD-5542', buyerName: 'Lakshmi Narayanan', productName: 'Vedic Gurukul Cotton Veshti Set', quantity: 2, items: [{name: 'Vedic Gurukul Cotton Veshti Set', quantity: 2, price: 1200}], status: 'shipped', totalAmount: 2400, createdAt: new Date(Date.now() - 259200000).toISOString(), isWhatsApp: true, paymentMethod: 'WhatsApp Pay' },
-        { id: '5', orderId: 'SACRED-4421', buyerName: 'Venkat Raman', productName: 'Lord Venkateswara Swamy Peethambaram Vastram', quantity: 5, items: [{name: 'Lord Venkateswara Swamy Peethambaram Vastram', quantity: 5, price: 24500}], status: 'order_received', totalAmount: 122500, createdAt: new Date(Date.now() - 345600000).toISOString(), isWhatsApp: false, paymentMethod: 'GPay', screenshotUrl: '/assets/landing/temple_statue.png' },
-        { id: '6', orderId: 'ORD-3310', buyerName: 'Gayatri Devi', productName: 'Goddess Mahalakshmi Idol Traditional Silk Saree', quantity: 1, items: [{name: 'Goddess Mahalakshmi Idol Traditional Silk Saree', quantity: 1, price: 22000}], status: 'delivered', totalAmount: 22000, createdAt: new Date(Date.now() - 604800000).toISOString(), isWhatsApp: true, paymentMethod: 'Cash on Ritual' },
-        { id: '7', orderId: 'SACRED-2201', buyerName: 'Anand Kumar (UK)', productName: 'Temple Utsavar Deity Silk Pavadai Vastram Set', quantity: 1, items: [{name: 'Temple Utsavar Deity Silk Pavadai Vastram Set', quantity: 1, price: 15500}], status: 'order_received', totalAmount: 15500, createdAt: new Date().toISOString(), isWhatsApp: false, paymentMethod: 'Swift Transfer', screenshotUrl: '' },
-        { id: '8', orderId: 'ORD-1199', buyerName: 'Temple Committee', productName: 'Swamy Deity Brass Alankaram Shringa Vasti', quantity: 10, items: [{name: 'Swamy Deity Brass Alankaram Shringa Vasti', quantity: 10, price: 16500}], status: 'payment_verified', totalAmount: 165000, createdAt: new Date(Date.now() - 432000000).toISOString(), isWhatsApp: true, paymentMethod: 'Cheque' },
-      ]);
+      const url = isAdmin ? '/api/orders' : `/api/orders/user/${currentUser?.uid}`;
+      const response = await axios.get(url);
+      setOrders(response.data);
+    } catch (err) {
+      console.error("Fetch Orders Error:", err);
+    } finally {
+      setLoading(false);
     }
   }
 
+
   const updateStatus = async (order, newStatus) => {
     try {
-      if (!isMock) {
-          await updateDoc(doc(db, 'orders', order.id), { 
-              status: newStatus,
-              paymentStatus: 'verified'
+      const orderIdForUpdate = order._id || order.id;
+      await axios.patch(`/api/orders/${orderIdForUpdate}/status`, { 
+          status: newStatus,
+          paymentStatus: 'verified'
+      });
+      
+      if (newStatus === 'payment_verified') {
+          await axios.post('/api/whatsapp/confirm-order', {
+              customerPhone: order.mobile || order.phone || '917598137660',
+              orderDetails: {
+                  productName: order.items?.[0]?.name || order.productName,
+                  quantity: order.items?.[0]?.quantity || order.quantity,
+                  totalAmount: order.totalAmount
+              }
           });
-          
-          if (newStatus === 'payment_verified') {
-              // Trigger WhatsApp Confirmation via Server
-              const axios = (await import('axios')).default;
-              await axios.post('/api/whatsapp/confirm-order', {
-                  customerPhone: order.phone || '917598137660', // Fallback for demo
-                  orderDetails: {
-                      productName: order.items?.[0]?.name || order.productName,
-                      quantity: order.items?.[0]?.quantity || order.quantity,
-                      totalAmount: order.totalAmount
-                  }
-              });
-          }
       }
-      setOrders(prev => prev.map(o => o.id === order.id ? { ...o, status: newStatus, paymentStatus: 'verified' } : o));
+      
+      fetchOrders(); // Refresh list
     } catch (err) {
-      console.error("Status Update/WhatsApp Error:", err);
-      setOrders(prev => prev.map(o => o.id === order.id ? { ...o, status: newStatus } : o));
+      console.error("Status Update Error:", err);
     }
   };
 
