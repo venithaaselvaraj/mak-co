@@ -3,6 +3,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import path from 'path';
 import mongoose from 'mongoose';
+import fs from 'fs';
 import { fileURLToPath } from 'url';
 import chatRoutes from "./routes/chat.js";
 import authRoutes from "./routes/auth.js";
@@ -94,8 +95,14 @@ app.get('/api/health', (req, res) => {
 });
 
 // Production Static Files
-const distPath = path.resolve(__dirname, '../dist');
+const distPath = path.resolve('dist');
 console.log(`📡 Serving static files from: ${distPath}`);
+
+if (!fs.existsSync(distPath)) {
+  console.log('❌ Error: dist folder not found. Did you run "npm run build"?');
+} else if (!fs.existsSync(path.join(distPath, 'index.html'))) {
+  console.log('❌ Error: index.html not found in dist folder.');
+}
 
 app.use(express.static(distPath));
 
